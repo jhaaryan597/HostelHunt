@@ -10,211 +10,245 @@ struct ListingDetailView: View {
 
     init(listing: Listing) {
         self.listing = listing
-        
         let region = MKCoordinateRegion(
-            center: listing.city == "Los Angeles" ? .losAngeles : .miami,
-            span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
+            center: CLLocationCoordinate2D(latitude: listing.latitude, longitude: listing.longitude),
+            span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
         )
-        
         self._cameraPosition = State(initialValue: .region(region))
     }
-    
+
     var body: some View {
-            ScrollView {
-                ZStack(alignment: .topLeading) {
+        ZStack {
+            GenZDesignSystem.Colors.background.ignoresSafeArea()
+
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 0) {
                     ListingImageCarouselView(listing: listing)
-                        .frame(height: 320)
-                    
-                    Button {
-                        dismiss()
-                    } label: {
-                        Image(systemName: "chevron.left")
-                            .foregroundStyle(.black)
-                            .font(.title2)
-                            .frame(width: 36, height: 36)
-                            .background(Circle().fill(.white))
-                    }
-                    .padding(32)
-                }
+                        .frame(height: 350)
 
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("\(listing.title)")
-                        .font(.title)
-                        .fontWeight(.semibold)
-
-                    VStack(alignment: .leading) {
-                        HStack(spacing: 2) {
-                            Image(systemName: "star.fill")
-                            Text(formatRating(listing.rating))
-                            Text(" - ")
-                            Text("\(listing.reviews.count) reviews")
-                                .underline()
-                                .fontWeight(.semibold)
+                    VStack(alignment: .leading, spacing: GenZDesignSystem.Spacing.lg) {
+                        ListingHeaderView(listing: listing)
+                        GenZDetailSection(title: "Hosted by \(listing.ownerName)", icon: "person.crop.circle.fill") {
+                            HostInfoView(listing: listing)
                         }
-                        .foregroundStyle(.black)
-                        .font(.caption)
-
-                        Text("\(listing.city), \(listing.state)")
-                            .font(.caption)
+                        GenZDetailSection(title: "What this place offers", icon: "sparkles") {
+                            AmenitiesView(amenities: listing.amenities)
+                        }
+                        GenZDetailSection(title: "Where you'll be", icon: "map.fill") {
+                            MapView(listing: listing, cameraPosition: $cameraPosition)
+                        }
                     }
+                    .padding()
+                    .background(GenZDesignSystem.Colors.background)
+                    .cornerRadius(GenZDesignSystem.CornerRadius.xl, corners: [.topLeft, .topRight])
+                    .offset(y: -GenZDesignSystem.Spacing.xl)
                 }
-                .padding(.leading)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                
-                Divider()
+            }
+            .scrollClipDisabled()
+            .ignoresSafeArea(edges: .top)
+
+            VStack {
+                Spacer()
+                ReserveBar(listing: listing, showLogin: $showLogin)
+            }
+
+            HeaderActions(dismissAction: { dismiss() })
+        }
+        .navigationBarHidden(true)
+        .sheet(isPresented: $showLogin) {
+            LoginView()
+        }
+    }
+}
+
+// MARK: - Subviews
+
+private struct ListingHeaderView: View {
+    let listing: Listing
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: GenZDesignSystem.Spacing.md) {
+            Text(listing.title)
+                .font(GenZDesignSystem.Typography.displaySmall)
+                .foregroundColor(GenZDesignSystem.Colors.textPrimary)
+
+            HStack {
+                Image(systemName: "mappin.and.ellipse")
+                Text("\(listing.city), \(listing.state)")
+                Spacer()
+                Image(systemName: "star.fill")
+                Text(String(format: "%.1f", listing.rating))
+            }
+            .font(GenZDesignSystem.Typography.bodySmall)
+            .foregroundColor(GenZDesignSystem.Colors.textSecondary)
+            .padding(.top, GenZDesignSystem.Spacing.xs)
+        }
+    }
+}
+
+private struct HostInfoView: View {
+    let listing: Listing
+
+    var body: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: GenZDesignSystem.Spacing.sm) {
+                Text("Entire \(listing.type.description)")
+                    .font(GenZDesignSystem.Typography.title2)
+                Text("\(listing.numberOfBeds) beds • \(listing.gender.description)")
+                    .font(GenZDesignSystem.Typography.bodySmall)
+                    .foregroundColor(GenZDesignSystem.Colors.textSecondary)
+            }
+            Spacer()
+            Image(listing.ownerImageUrl)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 64, height: 64)
+                .clipShape(Circle())
+                .overlay(Circle().stroke(GenZDesignSystem.Colors.gradientPrimary, lineWidth: 2))
+        }
+    }
+}
+
+private struct AmenitiesView: View {
+    let amenities: [ListingAmenities]
+    private let columns = [GridItem(.adaptive(minimum: 140), spacing: GenZDesignSystem.Spacing.md)]
+
+    var body: some View {
+        LazyVGrid(columns: columns, spacing: GenZDesignSystem.Spacing.md) {
+            ForEach(amenities) { amenity in
                 HStack {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Entire \(listing.type.description) hosted by \(listing.ownerName)")
-                            .font(.headline)
-                            .frame(width: 250, alignment: .leading)
-                        
-                        HStack(spacing: 2) {
-                            Text("\(listing.numberOfBeds) beds")
-                        }
-                        .font(.caption)
-                        
-                        Text("Gender: \(listing.gender.description)")
-                            .font(.caption)
-                    }
-                    .frame(width: 300, alignment: .leading)
+                    Image(systemName: amenity.imageName)
+                        .font(.title3)
+                        .foregroundStyle(GenZDesignSystem.Colors.gradientAccent)
+                        .frame(width: 30)
+                    Text(amenity.title)
+                        .font(GenZDesignSystem.Typography.bodySmall)
                     Spacer()
-                    Image(listing.ownerImageUrl)
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 64, height: 64)
-                        .clipShape(Circle())
                 }
-                .padding()
-                
-                Divider()
-                
-                VStack(alignment: .leading, spacing: 16) {
-                    ForEach(listing.features) { feature in
-                        HStack(spacing: 12) {
-                            Image(systemName: feature.imageName)
-
-                            VStack(alignment: .leading) {
-                                Text(feature.title)
-                                    .font(.footnote)
-                                    .fontWeight(.semibold)
-
-                                Text(feature.subtitle)
-                                    .font(.caption)
-                                    .foregroundStyle(.gray)
-                            }
-                        }
-                    }
-                }
-                .padding()
-                
-                Divider()
-                
-                VStack(alignment: .leading, spacing: 16) {
-                    Text("Reviews")
-                        .font(.headline)
-
-                    ForEach(listing.reviews) { review in
-                        HStack {
-                            Image(review.userImageUrl)
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 48, height: 48)
-                                .clipShape(Circle())
-
-                            VStack(alignment: .leading) {
-                                Text(review.userName)
-                                    .fontWeight(.semibold)
-                                Text(review.comment)
-                            }
-                            Spacer()
-                            
-                            HStack {
-                                Image(systemName: "star.fill")
-                                Text("\(review.rating)")
-                            }
-                        }
-                    }
-                }
-                .padding()
-
-                Divider()
-                
-                VStack(alignment: .leading, spacing: 16) {
-                    Text("What this place offers")
-                        .font(.headline)
-
-                    ForEach(listing.amenities) { amenity in
-                        HStack {
-                            Image(systemName: amenity.imageName)
-                                .frame(width: 32)
-
-                            Text(amenity.title)
-                                .font(.footnote)
-
-                            Spacer()
-                        }
-                    }
-                }
-                .padding()
-                
-                Divider()
-
-                VStack(alignment: .leading, spacing: 16) {
-                    Text("Where you'll be")
-                        .font(.headline)
-
-                    Map(position: $cameraPosition)
-                        .frame(height: 200)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                }
-                .padding()
-            }
-            .toolbar(.hidden, for: .tabBar)
-            .ignoresSafeArea()
-            .padding(.bottom, 64)
-            .overlay(alignment: .bottom){
-                VStack{
-                    Divider().padding(.bottom)
-                    
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Text("₹\(listing.pricePerMonth)")
-                                .font(.subheadline)
-                                .fontWeight(.semibold)
-                            
-                            Text("per month")
-                                .font(.footnote)
-                        }
-
-                        Spacer()
-
-                        Button {
-                            if authService.user != nil {
-                                // Handle reservation
-                            } else {
-                                showLogin.toggle()
-                            }
-                        } label: {
-                            Text("Reserve")
-                                .foregroundStyle(.white)
-                                .font(.subheadline)
-                                .fontWeight(.semibold)
-                                .frame(width: 140, height: 40)
-                                .background(Color("AccentColor"))
-                                .clipShape(RoundedRectangle(cornerRadius: 8))
-                        }
-                    }
-                    .padding(.horizontal, 32)
-                }
-                .background(.white)
-            }
-            .toolbar(.hidden, for: .navigationBar)
-            .sheet(isPresented: $showLogin) {
-                NavigationView {
-                    LoginView()
-                }
+                .padding(GenZDesignSystem.Spacing.md)
+                .background(GenZDesignSystem.Colors.glassPrimary)
+                .cornerRadius(GenZDesignSystem.CornerRadius.lg)
             }
         }
+    }
+}
+
+private struct MapView: View {
+    let listing: Listing
+    @Binding var cameraPosition: MapCameraPosition
+
+    var body: some View {
+        Map(position: $cameraPosition) {
+            Marker(listing.title, coordinate: CLLocationCoordinate2D(latitude: listing.latitude, longitude: listing.longitude))
+        }
+        .frame(height: 200)
+        .cornerRadius(GenZDesignSystem.CornerRadius.lg)
+        .overlay(
+            RoundedRectangle(cornerRadius: GenZDesignSystem.CornerRadius.lg)
+                .stroke(Color.white.opacity(0.2), lineWidth: 1)
+        )
+    }
+}
+
+private struct ReserveBar: View {
+    let listing: Listing
+    @Binding var showLogin: Bool
+    @EnvironmentObject var authService: AuthService
+
+    var body: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: GenZDesignSystem.Spacing.xs) {
+                Text("₹\(listing.pricePerMonth)")
+                    .font(GenZDesignSystem.Typography.price)
+                Text("per month")
+                    .font(GenZDesignSystem.Typography.bodySmall)
+                    .foregroundColor(GenZDesignSystem.Colors.textSecondary)
+            }
+            Spacer()
+            Button {
+                if authService.user == nil {
+                    showLogin = true
+                }
+            } label: {
+                Text("Reserve")
+                    .primaryButton()
+            }
+        }
+        .padding(GenZDesignSystem.Spacing.lg)
+        .background(.ultraThinMaterial)
+        .cornerRadius(GenZDesignSystem.CornerRadius.xl, corners: [.topLeft, .topRight])
+        .overlay(alignment: .top) {
+            Rectangle()
+                .fill(GenZDesignSystem.Colors.gradientPrimary.opacity(0.5))
+                .frame(height: 1)
+        }
+    }
+}
+
+private struct HeaderActions: View {
+    var dismissAction: () -> Void
+
+    var body: some View {
+        VStack {
+            HStack {
+                Button(action: dismissAction) {
+                    Image(systemName: "chevron.left")
+                        .font(.title2)
+                        .padding(GenZDesignSystem.Spacing.sm)
+                        .background(.ultraThinMaterial)
+                        .clipShape(Circle())
+                        
+                }
+                Spacer()
+                Button {
+                    // TODO: Add to wishlist
+                } label: {
+                    Image(systemName: "heart")
+                        .font(.title2)
+                        .padding(GenZDesignSystem.Spacing.sm)
+                        .background(.ultraThinMaterial)
+                        .clipShape(Circle())
+                        
+                }
+            }
+            .font(GenZDesignSystem.Typography.title2)
+            .foregroundColor(GenZDesignSystem.Colors.textPrimary)
+            .padding(.horizontal, GenZDesignSystem.Spacing.lg)
+            .padding(.top, 50)
+
+            Spacer()
+        }
+        .ignoresSafeArea()
+    }
+}
+
+private struct GenZDetailSection<Content: View>: View {
+    let title: String
+    let icon: String
+    @ViewBuilder var content: Content
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: GenZDesignSystem.Spacing.md) {
+            HStack(spacing: GenZDesignSystem.Spacing.md) {
+                Image(systemName: icon)
+                    .font(.title2)
+                    .foregroundStyle(GenZDesignSystem.Colors.gradientAccent)
+                Text(title)
+                    .font(GenZDesignSystem.Typography.title2)
+            }
+            .foregroundColor(GenZDesignSystem.Colors.textPrimary)
+
+            content
+        }
+        .padding()
+        .background(GenZDesignSystem.Colors.glassPrimary)
+        .cornerRadius(GenZDesignSystem.CornerRadius.xl)
+    }
+}
+
+#Preview {
+    ListingDetailView(listing: DeveloperPreview.shared.listings[0])
+        .environmentObject(AuthService())
 }
 
 #Preview {

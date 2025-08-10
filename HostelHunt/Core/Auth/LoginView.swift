@@ -7,57 +7,74 @@ struct LoginView: View {
     @EnvironmentObject var authService: AuthService
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 20) {
-                Image(systemName: "person.crop.circle.fill")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 120, height: 120)
-                .foregroundColor(Color("AccentColor"))
-                .padding(.bottom, 32)
+        ZStack {
+            GenZDesignSystem.Colors.background.ignoresSafeArea()
 
-            AuthTextField(imageName: "envelope.fill", placeholder: "Email", text: $email)
-            AuthTextField(imageName: "lock.fill", placeholder: "Password", text: $password, isSecure: true)
-
-            if let errorMessage = errorMessage {
-                Text(errorMessage)
-                    .foregroundColor(.red)
-                    .font(.caption)
-            }
-
-            Button(action: {
-                Task {
-                    do {
-                        try await authService.signIn(withEmail: email, password: password)
-                    } catch {
-                        errorMessage = error.localizedDescription
+            ScrollView {
+                VStack(spacing: GenZDesignSystem.Spacing.lg) {
+                    // Header
+                    VStack {
+                        Image(systemName: "building.2.crop.circle.fill") // Or a custom logo
+                            .font(.system(size: 100))
+                            .foregroundStyle(GenZDesignSystem.Colors.gradientAccent)
+                            
+                        
+                        Text("Welcome Back")
+                            .font(GenZDesignSystem.Typography.displayMedium)
+                            .foregroundColor(GenZDesignSystem.Colors.textPrimary)
+                        
+                        Text("Log in to continue your adventure")
+                            .font(GenZDesignSystem.Typography.bodySmall)
+                            .foregroundColor(GenZDesignSystem.Colors.textSecondary)
                     }
-                }
-            }) {
-                Text("Login")
-                    .fontWeight(.semibold)
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color("AccentColor"))
-                    .cornerRadius(10)
-            }
-            .padding(.top)
+                    .padding(.vertical, GenZDesignSystem.Spacing.xl)
 
-            Spacer()
+                    // Form
+                    VStack(spacing: GenZDesignSystem.Spacing.md) {
+                        GenZAuthTextField(iconName: "envelope.fill", placeholder: "Email", text: $email)
+                        GenZAuthTextField(iconName: "lock.fill", placeholder: "Password", text: $password, isSecure: true)
+                    }
 
-            NavigationLink(destination: SignUpView()) {
-                HStack {
-                    Text("Don't have an account?")
-                    Text("Sign up")
-                        .fontWeight(.semibold)
+                    if let errorMessage = errorMessage {
+                        Text(errorMessage)
+                            .foregroundColor(GenZDesignSystem.Colors.error)
+                            .font(GenZDesignSystem.Typography.caption)
+                            .padding(.top, GenZDesignSystem.Spacing.sm)
+                    }
+
+                    // Login Button
+                    Button {
+                        Task {
+                            do {
+                                try await authService.signIn(withEmail: email, password: password)
+                            } catch {
+                                errorMessage = error.localizedDescription
+                            }
+                        }
+                    } label: {
+                        Text("Log In")
+                            .primaryButton()
+                    }
+                    .padding(.top, GenZDesignSystem.Spacing.md)
+
+                    Spacer()
+
+                    // Sign Up Link
+                    NavigationLink(destination: SignUpView()) {
+                        HStack(spacing: GenZDesignSystem.Spacing.xs) {
+                            Text("Don't have an account?")
+                                .foregroundColor(GenZDesignSystem.Colors.textSecondary)
+                            Text("Sign Up")
+                                .fontWeight(.bold)
+                                .foregroundStyle(GenZDesignSystem.Colors.gradientPrimary)
+                        }
+                        .font(GenZDesignSystem.Typography.bodyRegular)
+                    }
+                    .padding(.bottom, GenZDesignSystem.Spacing.md)
                 }
-                .foregroundColor(Color("AccentColor"))
-                .font(.footnote)
+                .padding(.horizontal, GenZDesignSystem.Spacing.lg)
             }
-        }
-        .padding(.horizontal, 32)
-        .navigationBarHidden(true)
+            .navigationBarHidden(true)
         }
     }
 }

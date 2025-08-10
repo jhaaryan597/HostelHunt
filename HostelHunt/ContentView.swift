@@ -4,7 +4,7 @@ struct ContentView: View {
     @StateObject var authService = AuthService.shared
 
     var body: some View {
-        MainTabView()
+        GenZMainContentView()
             .environmentObject(authService)
     }
 }

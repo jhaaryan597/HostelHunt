@@ -13,6 +13,9 @@ struct HostelHuntApp: App {
                     .environmentObject(authService)
                     .tint(Color("AccentColor"))
             }
+            .onAppear {
+                NotificationManager.shared.requestAuthorization()
+            }
             .onOpenURL { url in
                 Task {
                     do {

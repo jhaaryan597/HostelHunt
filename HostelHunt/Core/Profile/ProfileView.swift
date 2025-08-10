@@ -5,72 +5,116 @@ struct ProfileView: View {
     @State private var showLogin = false
 
     var body: some View {
-        VStack {
-            if let user = authService.currentUser {
-                VStack(spacing: 24) {
-                    Image(systemName: "person.circle.fill")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 120, height: 120)
-                        .foregroundColor(Color("AccentColor"))
-                        .padding(.top, 40)
+        NavigationStack {
+            ZStack {
+                GenZDesignSystem.Colors.background.ignoresSafeArea()
 
-                    VStack(spacing: 12) {
-                        ProfileDetailRow(iconName: "person.fill", label: "Full Name", value: user.fullname)
-                        ProfileDetailRow(iconName: "at", label: "Username", value: user.username)
-                        ProfileDetailRow(iconName: "envelope.fill", label: "Email", value: user.email)
-                    }
-                    .padding(.horizontal)
+                if let user = authService.currentUser {
+                    // Logged-in view
+                    ScrollView {
+                        VStack(spacing: GenZDesignSystem.Spacing.lg) {
+                            // Profile Header
+                            VStack {
+                                Image(systemName: "person.circle.fill")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 120, height: 120)
+                                    .foregroundStyle(GenZDesignSystem.Colors.gradientAccent)
+                                    .padding()
+                                    .background(.ultraThinMaterial)
+                                    .clipShape(Circle())
+                                    .overlay(
+                                        Circle()
+                                            .stroke(GenZDesignSystem.Colors.primary, lineWidth: 2)
+                                    )
+                                    
+                                    .padding(.top, GenZDesignSystem.Spacing.lg)
 
-                    Spacer()
+                                Text(user.fullname)
+                                    .font(GenZDesignSystem.Typography.title2)
+                                    .foregroundColor(GenZDesignSystem.Colors.textPrimary)
+                                    .padding(.top, GenZDesignSystem.Spacing.sm)
 
-                    Button(action: {
-                        Task {
-                            try await authService.signOut()
+                                Text("@\(user.username)")
+                                    .font(GenZDesignSystem.Typography.body)
+                                    .foregroundColor(GenZDesignSystem.Colors.textSecondary)
+                            }
+
+                            // Profile Details Section
+                            VStack(spacing: GenZDesignSystem.Spacing.md) {
+                                GenZProfileDetailRow(iconName: "envelope.fill", label: "Email", value: user.email)
+                                GenZProfileDetailRow(iconName: "calendar", label: "Joined", value: "June 2024") // Placeholder
+                            }
+                            .padding(.horizontal)
+
+                            Spacer()
+
+                            // Sign Out Button
+                            Button {
+                                Task {
+                                    try await authService.signOut()
+                                }
+                            } label: {
+                                Text("Sign Out")
+                                    .accentButton()
+                            }
+                            .padding(.bottom, GenZDesignSystem.Spacing.lg)
+
                         }
-                    }) {
-                        Text("Sign Out")
-                            .fontWeight(.semibold)
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color("AccentColor"))
-                            .cornerRadius(10)
                     }
-                    .padding(.horizontal, 32)
-                    .padding(.bottom, 20)
-                }
-            } else {
-                VStack(spacing: 20) {
-                    Spacer()
-                    Text("Log in to manage your profile.")
-                        .font(.headline)
-                        .foregroundColor(.gray)
-                    Button(action: {
-                        showLogin.toggle()
-                    }) {
-                        Text("Log In")
-                            .fontWeight(.semibold)
-                            .foregroundColor(.white)
-                            .frame(width: 200, height: 50)
-                            .background(Color("AccentColor"))
-                            .cornerRadius(10)
+                    .navigationTitle("Profile")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .principal) {
+                            Text("Profile")
+                                .font(GenZDesignSystem.Typography.title3)
+                                .foregroundColor(GenZDesignSystem.Colors.textPrimary)
+                        }
                     }
-                    Spacer()
+                } else {
+                    // Logged-out view
+                    VStack(spacing: GenZDesignSystem.Spacing.lg) {
+                        Spacer()
+                        
+                        Image(systemName: "person.crop.circle.badge.plus")
+                            .font(.system(size: 80))
+                            .foregroundColor(GenZDesignSystem.Colors.accent)
+                            
+                        
+                        VStack(spacing: GenZDesignSystem.Spacing.sm) {
+                            Text("Join the Community")
+                                .font(GenZDesignSystem.Typography.title2)
+                                .foregroundColor(GenZDesignSystem.Colors.textPrimary)
+                            
+                            Text("Log in to manage your profile and connect with others.")
+                                .font(GenZDesignSystem.Typography.body)
+                                .foregroundColor(GenZDesignSystem.Colors.textSecondary)
+                                .multilineTextAlignment(.center)
+                        }
+                        .padding(.horizontal)
+                        
+                        Button {
+                            showLogin.toggle()
+                        } label: {
+                            Text("Log In / Sign Up")
+                                .primaryButton()
+                        }
+                        
+                        Spacer()
+                        Spacer()
+                    }
+                    .padding()
+                    .sheet(isPresented: $showLogin) {
+                        LoginView()
+                            .environmentObject(authService)
+                    }
                 }
-            }
-        }
-        .navigationTitle("Profile")
-        .navigationBarTitleDisplayMode(.inline)
-        .sheet(isPresented: $showLogin) {
-            NavigationView {
-                LoginView()
             }
         }
     }
 }
 
-struct ProfileDetailRow: View {
+struct GenZProfileDetailRow: View {
     let iconName: String
     let label: String
     let value: String
@@ -78,16 +122,27 @@ struct ProfileDetailRow: View {
     var body: some View {
         HStack {
             Image(systemName: iconName)
-                .foregroundColor(Color("AccentColor"))
-                .frame(width: 30)
+                .font(.title2)
+                .foregroundStyle(GenZDesignSystem.Colors.gradientAccent)
+                .frame(width: 40)
+            
             Text(label)
+                .font(GenZDesignSystem.Typography.body)
                 .fontWeight(.semibold)
+                .foregroundColor(GenZDesignSystem.Colors.textPrimary)
+            
             Spacer()
+            
             Text(value)
-                .foregroundColor(.gray)
+                .font(GenZDesignSystem.Typography.body)
+                .foregroundColor(GenZDesignSystem.Colors.textSecondary)
         }
         .padding()
-        .background(Color(.systemGray6))
-        .cornerRadius(10)
+        .background(.ultraThinMaterial)
+        .cornerRadius(GenZDesignSystem.CornerRadius.lg)
+        .overlay(
+            RoundedRectangle(cornerRadius: GenZDesignSystem.CornerRadius.lg)
+                .stroke(Color.white.opacity(0.2), lineWidth: 1)
+        )
     }
 }

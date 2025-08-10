@@ -11,59 +11,88 @@ struct WishlistsView: View {
 
     var body: some View {
         NavigationStack {
-            if authService.user != nil {
-                VStack {
-                    if viewModel.listings.isEmpty {
-                        Text("Your wishlist is empty.")
-                            .font(.headline)
-                            .foregroundStyle(.gray)
-                    } else {
-                        ScrollView {
-                            ForEach(viewModel.listings) { listing in
-                                ListingItemView(listing: listing)
-                                    .environmentObject(authService)
-                                    .onTapGesture {
-                                        // Navigate to listing detail view
-                                    }
+            ZStack {
+                GenZDesignSystem.Colors.background.ignoresSafeArea()
+
+                if authService.user != nil {
+                    VStack {
+                        if viewModel.listings.isEmpty {
+                            VStack(spacing: GenZDesignSystem.Spacing.md) {
+                                Image(systemName: "sparkles")
+                                    .font(.system(size: 64))
+                                    .foregroundColor(GenZDesignSystem.Colors.accent)
+                                    
+                                
+                                Text("Your Wishlist Awaits!")
+                                    .font(GenZDesignSystem.Typography.title2)
+                                    .foregroundColor(GenZDesignSystem.Colors.textPrimary)
+                                
+                                Text("Tap the heart on any listing to save it here.")
+                                    .font(GenZDesignSystem.Typography.body)
+                                    .foregroundColor(GenZDesignSystem.Colors.textSecondary)
+                                    .multilineTextAlignment(.center)
+                                    .padding(.horizontal)
+                            }
+                        } else {
+                            ScrollView {
+                                ForEach(viewModel.listings) { listing in
+                                    ListingItemView(listing: listing)
+                                        .environmentObject(authService)
+                                        .padding(.horizontal, GenZDesignSystem.Spacing.md)
+                                        .padding(.vertical, GenZDesignSystem.Spacing.sm)
+                                }
                             }
                         }
                     }
-                }
-                .navigationTitle("Wishlists")
-                .onAppear {
-                    Task {
-                        await viewModel.fetchWishlist()
+                    .navigationTitle("Wishlists")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .principal) {
+                            Text("Wishlists")
+                                .font(GenZDesignSystem.Typography.title3)
+                                .foregroundColor(GenZDesignSystem.Colors.textPrimary)
+                        }
                     }
-                }
-            } else {
-                VStack(alignment: .leading, spacing: 32) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Log in to view your wishlists")
-                            .font(.headline)
+                    .onAppear {
+                        Task {
+                            await viewModel.fetchWishlist()
+                        }
+                    }
+                } else {
+                    VStack(spacing: GenZDesignSystem.Spacing.lg) {
+                        Spacer()
                         
-                        Text("You can create, view or edit wishlists once you've logged in")
-                            .font(.footnote)
+                        Image(systemName: "lock.heart.fill")
+                            .font(.system(size: 80))
+                            .foregroundColor(GenZDesignSystem.Colors.accent)
+                            
+                        
+                        VStack(spacing: GenZDesignSystem.Spacing.sm) {
+                            Text("Unlock Your Wishlists")
+                                .font(GenZDesignSystem.Typography.title2)
+                                .foregroundColor(GenZDesignSystem.Colors.textPrimary)
+                            
+                            Text("Log in to create, view, and edit your wishlists.")
+                                .font(GenZDesignSystem.Typography.body)
+                                .foregroundColor(GenZDesignSystem.Colors.textSecondary)
+                                .multilineTextAlignment(.center)
+                        }
+                        .padding(.horizontal)
+                        
+                        Button {
+                            showLogin.toggle()
+                        } label: {
+                            Text("Log In & Explore")
+                                .primaryButton()
+                        }
+                        
+                        Spacer()
+                        Spacer()
                     }
-                    
-                    Button {
-                        showLogin.toggle()
-                    } label: {
-                        Text("Log in")
-                            .foregroundStyle(.white)
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                            .frame(width: 360, height: 48)
-                            .background(Color("AccentColor"))
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
-                    }
-                    
-                    Spacer()
-                }
-                .padding()
-                .navigationTitle("Wishlists")
-                .sheet(isPresented: $showLogin) {
-                    NavigationView {
+                    .padding()
+                    .sheet(isPresented: $showLogin) {
                         LoginView()
+                            .environmentObject(authService)
                     }
                 }
             }
