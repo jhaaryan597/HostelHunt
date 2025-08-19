@@ -39,7 +39,9 @@ class NotificationManager: NSObject, ObservableObject, UNUserNotificationCenterD
         print("Successfully registered for notifications with device token: \(tokenString)")
         DispatchQueue.main.async {
             self.deviceToken = tokenString
-            // TODO: Send this token to your server (Supabase)
+            Task {
+                await SupabaseManager.shared.updateDeviceToken(tokenString)
+            }
         }
     }
     

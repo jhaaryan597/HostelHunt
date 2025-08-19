@@ -3,47 +3,50 @@ import SwiftUI
 struct ProfileView: View {
     @EnvironmentObject var authService: AuthService
     @State private var showLogin = false
+    @State private var showEditProfile = false
 
     var body: some View {
         NavigationStack {
             ZStack {
-                GenZDesignSystem.Colors.background.ignoresSafeArea()
+                GenZDesignSystem.Colors.auroraBackground.ignoresSafeArea()
 
                 if let user = authService.currentUser {
                     // Logged-in view
                     ScrollView {
                         VStack(spacing: GenZDesignSystem.Spacing.lg) {
                             // Profile Header
-                            VStack {
-                                Image(systemName: "person.circle.fill")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 120, height: 120)
-                                    .foregroundStyle(GenZDesignSystem.Colors.gradientAccent)
-                                    .padding()
-                                    .background(.ultraThinMaterial)
-                                    .clipShape(Circle())
-                                    .overlay(
-                                        Circle()
-                                            .stroke(GenZDesignSystem.Colors.primary, lineWidth: 2)
-                                    )
+                            FuturisticCard {
+                                VStack {
+                                    Image(systemName: "person.circle.fill")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 120, height: 120)
+                                        .foregroundStyle(GenZDesignSystem.Colors.gradientAccent)
+                                        .padding()
+                                        .background(.ultraThinMaterial)
+                                        .clipShape(Circle())
+                                        .overlay(
+                                            Circle()
+                                                .stroke(GenZDesignSystem.Colors.primary, lineWidth: 2)
+                                        )
                                     
-                                    .padding(.top, GenZDesignSystem.Spacing.lg)
+                                    Text(user.fullname)
+                                        .font(GenZDesignSystem.Typography.title2)
+                                        .foregroundColor(GenZDesignSystem.Colors.textPrimary)
+                                        .padding(.top, GenZDesignSystem.Spacing.sm)
 
-                                Text(user.fullname)
-                                    .font(GenZDesignSystem.Typography.title2)
-                                    .foregroundColor(GenZDesignSystem.Colors.textPrimary)
-                                    .padding(.top, GenZDesignSystem.Spacing.sm)
-
-                                Text("@\(user.username)")
-                                    .font(GenZDesignSystem.Typography.body)
-                                    .foregroundColor(GenZDesignSystem.Colors.textSecondary)
+                                    Text("@\(user.username)")
+                                        .font(GenZDesignSystem.Typography.body)
+                                        .foregroundColor(GenZDesignSystem.Colors.textSecondary)
+                                }
                             }
+                            .padding(.horizontal)
 
                             // Profile Details Section
                             VStack(spacing: GenZDesignSystem.Spacing.md) {
-                                GenZProfileDetailRow(iconName: "envelope.fill", label: "Email", value: user.email)
-                                GenZProfileDetailRow(iconName: "calendar", label: "Joined", value: "June 2024") // Placeholder
+                                FuturisticProfileDetailRow(iconName: "envelope.fill", label: "Email", value: user.email)
+                                FuturisticProfileDetailRow(iconName: "calendar", label: "Joined", value: "June 2024") // Placeholder
+                                FuturisticProfileDetailRow(iconName: "person.2.fill", label: "Connections", value: "0") // Placeholder
                             }
                             .padding(.horizontal)
 
@@ -56,19 +59,30 @@ struct ProfileView: View {
                                 }
                             } label: {
                                 Text("Sign Out")
-                                    .accentButton()
                             }
-                            .padding(.bottom, GenZDesignSystem.Spacing.lg)
+                            .buttonStyle(FuturisticAccentButton())
+                            .padding(.bottom, GenZDesignSystem.Spacing.sm)
 
                         }
                     }
                     .navigationTitle("Profile")
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
-                        ToolbarItem(placement: .principal) {
-                            Text("Profile")
-                                .font(GenZDesignSystem.Typography.title3)
-                                .foregroundColor(GenZDesignSystem.Colors.textPrimary)
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button {
+                                showEditProfile.toggle()
+                            } label: {
+                                Text("Edit")
+                                    .font(GenZDesignSystem.Typography.body)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(GenZDesignSystem.Colors.accent)
+                            }
+                        }
+                    }
+                    .sheet(isPresented: $showEditProfile) {
+                        if let user = authService.currentUser {
+                            EditProfileView(user: user)
+                                .environmentObject(authService)
                         }
                     }
                 } else {

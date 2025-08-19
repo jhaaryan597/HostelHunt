@@ -89,7 +89,7 @@ struct GenZListingCard: View {
                 }
                 .padding(GenZDesignSystem.Spacing.md)
             }
-            .cornerRadius(GenZDesignSystem.CornerRadius.lg, corners: [.topLeft, .topRight])
+            .clipShape(RoundedCorner(radius: GenZDesignSystem.CornerRadius.lg, corners: [.topLeft, .topRight]))
             
             // Content Section
             VStack(alignment: .leading, spacing: GenZDesignSystem.Spacing.md) {
@@ -216,13 +216,13 @@ struct GenZFeatureChip: View {
     
     private var featureGradient: LinearGradient {
         switch feature {
-        case .verified: return GenZDesignSystem.Colors.gradientSuccess
-        case .mealService: return GenZDesignSystem.Colors.gradientWarning
-        case .studyRoom: return GenZDesignSystem.Colors.gradientInfo
+        case .verified: return GenZDesignSystem.Colors.gradientPrimary
+        case .mealService: return GenZDesignSystem.Colors.gradientAccent
+        case .studyRoom: return GenZDesignSystem.Colors.gradientPrimary
         case .commonArea: return GenZDesignSystem.Colors.gradientPrimary
         case .parking: return LinearGradient(colors: [.gray, .black], startPoint: .topLeading, endPoint: .bottomTrailing)
         case .rooftop: return GenZDesignSystem.Colors.gradientAccent
-        case .garden: return GenZDesignSystem.Colors.gradientSuccess
+        case .garden: return GenZDesignSystem.Colors.gradientPrimary
         @unknown default: return GenZDesignSystem.Colors.gradientPrimary
         }
     }

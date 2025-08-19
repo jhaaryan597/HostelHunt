@@ -132,4 +132,27 @@ class AuthService: ObservableObject {
         guard let user = currentUser, let wishlist = user.wishlist else { return false }
         return wishlist.contains(listing.id)
     }
+    
+    func updateUserProfile(fullname: String, username: String) async throws {
+        guard var user = currentUser else { return }
+        
+        user.fullname = fullname
+        user.username = username
+        
+        try await updateUser(user)
+        self.currentUser = user
+    }
+    
+    // MARK: - Connections
+    
+    func sendConnectionRequest(to user: User) async throws {
+        guard let currentUser = self.user else { return }
+        
+        let connection = Connection(id: 0, createdAt: Date(), userId1: currentUser.id, userId2: UUID(uuidString: user.id)!, status: "pending")
+        
+        try await SupabaseManager.shared.client
+            .from("connections")
+            .insert(connection)
+            .execute()
+    }
 }

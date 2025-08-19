@@ -8,7 +8,7 @@ struct ListingItemView: View {
         VStack(spacing: 8) {
             // images
             ListingImageCarouselView(listing: listing)
-                .frame(height: 320)
+                .frame(height: 200)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
             
             HStack(alignment: .top) {
@@ -58,7 +58,6 @@ struct ListingItemView: View {
             }
             .font(.footnote)
         }
-        .padding()
     }
 }
 

@@ -14,4 +14,16 @@ class SupabaseManager {
         
         client = SupabaseClient(supabaseURL: supabaseURL, supabaseKey: config.supabaseKey)
     }
+    
+    func updateDeviceToken(_ token: String) async {
+        do {
+            let currentUser = try await client.auth.user()
+            let updates = ["device_token": token]
+            
+            try await client.from("users").update(updates).eq("id", value: currentUser.id).execute()
+            print("Successfully updated device token")
+        } catch {
+            print("Error updating device token: \(error)")
+        }
+    }
 }

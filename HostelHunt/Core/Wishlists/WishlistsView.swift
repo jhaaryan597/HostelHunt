@@ -12,7 +12,7 @@ struct WishlistsView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                GenZDesignSystem.Colors.background.ignoresSafeArea()
+                GenZDesignSystem.Colors.auroraBackground.ignoresSafeArea()
 
                 if authService.user != nil {
                     VStack {
@@ -36,7 +36,7 @@ struct WishlistsView: View {
                         } else {
                             ScrollView {
                                 ForEach(viewModel.listings) { listing in
-                                    ListingItemView(listing: listing)
+                                    FuturisticListingCard(listing: listing)
                                         .environmentObject(authService)
                                         .padding(.horizontal, GenZDesignSystem.Spacing.md)
                                         .padding(.vertical, GenZDesignSystem.Spacing.sm)

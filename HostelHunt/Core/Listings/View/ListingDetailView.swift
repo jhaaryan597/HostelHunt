@@ -7,6 +7,11 @@ struct ListingDetailView: View {
     let listing: Listing
     @State private var cameraPosition: MapCameraPosition
     @State private var showLogin = false
+    @StateObject private var reservationService = ReservationService()
+    @State private var isBooking = false
+    @State private var bookingSuccess = false
+    @State private var showError = false
+    @State private var errorMessage = ""
 
     init(listing: Listing) {
         self.listing = listing
@@ -19,7 +24,7 @@ struct ListingDetailView: View {
 
     var body: some View {
         ZStack {
-            GenZDesignSystem.Colors.background.ignoresSafeArea()
+            GenZDesignSystem.Colors.auroraBackground.ignoresSafeArea()
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
@@ -40,7 +45,7 @@ struct ListingDetailView: View {
                     }
                     .padding()
                     .background(GenZDesignSystem.Colors.background)
-                    .cornerRadius(GenZDesignSystem.CornerRadius.xl, corners: [.topLeft, .topRight])
+                    .clipShape(RoundedCorner(radius: GenZDesignSystem.CornerRadius.xl, corners: [.topLeft, .topRight]))
                     .offset(y: -GenZDesignSystem.Spacing.xl)
                 }
             }
@@ -49,7 +54,12 @@ struct ListingDetailView: View {
 
             VStack {
                 Spacer()
-                ReserveBar(listing: listing, showLogin: $showLogin)
+                ReserveBar(
+                    listing: listing,
+                    isBooking: $isBooking,
+                    showLogin: $showLogin,
+                    reserveAction: reserveListing
+                )
             }
 
             HeaderActions(dismissAction: { dismiss() })
@@ -57,6 +67,35 @@ struct ListingDetailView: View {
         .navigationBarHidden(true)
         .sheet(isPresented: $showLogin) {
             LoginView()
+        }
+        .alert("Success!", isPresented: $bookingSuccess) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("Your reservation for \(listing.title) has been confirmed.")
+        }
+        .alert("Error", isPresented: $showError) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(errorMessage)
+        }
+    }
+
+    private func reserveListing() {
+        guard let user = authService.currentUser else {
+            showLogin = true
+            return
+        }
+
+        isBooking = true
+        Task {
+            do {
+                try await reservationService.reserve(listing: listing, user: user)
+                bookingSuccess = true
+            } catch {
+                errorMessage = "Failed to reserve the listing. Please try again."
+                showError = true
+            }
+            isBooking = false
         }
     }
 }
@@ -69,7 +108,7 @@ private struct ListingHeaderView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: GenZDesignSystem.Spacing.md) {
             Text(listing.title)
-                .font(GenZDesignSystem.Typography.displaySmall)
+                .font(GenZDesignSystem.Typography.title1)
                 .foregroundColor(GenZDesignSystem.Colors.textPrimary)
 
             HStack {
@@ -93,7 +132,7 @@ private struct HostInfoView: View {
         HStack {
             VStack(alignment: .leading, spacing: GenZDesignSystem.Spacing.sm) {
                 Text("Entire \(listing.type.description)")
-                    .font(GenZDesignSystem.Typography.title2)
+                    .font(GenZDesignSystem.Typography.headlineSmall)
                 Text("\(listing.numberOfBeds) beds • \(listing.gender.description)")
                     .font(GenZDesignSystem.Typography.bodySmall)
                     .foregroundColor(GenZDesignSystem.Colors.textSecondary)
@@ -152,8 +191,9 @@ private struct MapView: View {
 
 private struct ReserveBar: View {
     let listing: Listing
+    @Binding var isBooking: Bool
     @Binding var showLogin: Bool
-    @EnvironmentObject var authService: AuthService
+    var reserveAction: () -> Void
 
     var body: some View {
         HStack {
@@ -165,18 +205,21 @@ private struct ReserveBar: View {
                     .foregroundColor(GenZDesignSystem.Colors.textSecondary)
             }
             Spacer()
-            Button {
-                if authService.user == nil {
-                    showLogin = true
+            Button(action: reserveAction) {
+                if isBooking {
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                } else {
+                    Text("Reserve")
                 }
-            } label: {
-                Text("Reserve")
-                    .primaryButton()
             }
+            .buttonStyle(FuturisticPrimaryButton())
+            .disabled(isBooking)
         }
-        .padding(GenZDesignSystem.Spacing.lg)
+        .padding(.horizontal, GenZDesignSystem.Spacing.lg)
+        .padding(.vertical, GenZDesignSystem.Spacing.sm)
         .background(.ultraThinMaterial)
-        .cornerRadius(GenZDesignSystem.CornerRadius.xl, corners: [.topLeft, .topRight])
+        .clipShape(RoundedCorner(radius: GenZDesignSystem.CornerRadius.xl, corners: [.topLeft, .topRight]))
         .overlay(alignment: .top) {
             Rectangle()
                 .fill(GenZDesignSystem.Colors.gradientPrimary.opacity(0.5))
@@ -195,7 +238,7 @@ private struct HeaderActions: View {
                     Image(systemName: "chevron.left")
                         .font(.title2)
                         .padding(GenZDesignSystem.Spacing.sm)
-                        .background(.ultraThinMaterial)
+                        .background(FuturisticCard { EmptyView() })
                         .clipShape(Circle())
                         
                 }
@@ -206,7 +249,7 @@ private struct HeaderActions: View {
                     Image(systemName: "heart")
                         .font(.title2)
                         .padding(GenZDesignSystem.Spacing.sm)
-                        .background(.ultraThinMaterial)
+                        .background(FuturisticCard { EmptyView() })
                         .clipShape(Circle())
                         
                 }
@@ -234,7 +277,7 @@ private struct GenZDetailSection<Content: View>: View {
                     .font(.title2)
                     .foregroundStyle(GenZDesignSystem.Colors.gradientAccent)
                 Text(title)
-                    .font(GenZDesignSystem.Typography.title2)
+                    .font(GenZDesignSystem.Typography.title3)
             }
             .foregroundColor(GenZDesignSystem.Colors.textPrimary)
 
@@ -249,6 +292,16 @@ private struct GenZDetailSection<Content: View>: View {
 #Preview {
     ListingDetailView(listing: DeveloperPreview.shared.listings[0])
         .environmentObject(AuthService())
+}
+
+struct RoundedCorner: Shape {
+    var radius: CGFloat = .infinity
+    var corners: UIRectCorner = .allCorners
+
+    func path(in rect: CGRect) -> Path {
+        let path = UIBezierPath(roundedRect: rect, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
+        return Path(path.cgPath)
+    }
 }
 
 #Preview {

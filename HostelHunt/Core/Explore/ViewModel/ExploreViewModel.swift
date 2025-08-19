@@ -10,8 +10,8 @@ class ExploreViewModel: ObservableObject {
     
     private let service: ExploreService
     private let authService: AuthService
-    private var listingsCopy = [Listing]()
-    private var currentPage = 0
+    private var listingsByGender = [Gender: [Listing]]()
+    private var currentPageByGender = [Gender: Int]()
     private let listingsPerPage = 10
     @Published var isLoading = false
     private var cancellables = Set<AnyCancellable>()
@@ -27,10 +27,24 @@ class ExploreViewModel: ObservableObject {
                         await self?.fetchListings()
                     } else {
                         self?.listings = []
-                        self?.listingsCopy = []
-                        self?.currentPage = 0
+                        self?.listingsByGender = [:]
+                        self?.currentPageByGender = [:]
                     }
                 }
+            }
+            .store(in: &cancellables)
+        
+        $searchLocation
+            .debounce(for: .milliseconds(500), scheduler: RunLoop.main)
+            .removeDuplicates()
+            .sink { [weak self] _ in
+                self?.updateListingsForLocation()
+            }
+            .store(in: &cancellables)
+        
+        $selectedGender
+            .sink { [weak self] _ in
+                self?.updateListingsForLocation()
             }
             .store(in: &cancellables)
     }
@@ -41,10 +55,9 @@ class ExploreViewModel: ObservableObject {
         isLoading = true
         
         do {
-            let new_listings = try await service.fetchListings(page: currentPage, limit: listingsPerPage)
-            self.listings.append(contentsOf: new_listings)
-            self.listingsCopy = listings
-            self.currentPage += 1
+            let allListings = try await service.fetchListings(page: 0, limit: 100) // Fetch all for simplicity
+            listingsByGender = Dictionary(grouping: allListings, by: { $0.gender })
+            updateListingsForLocation()
         } catch {
             print("DEBUG: Failed to fetch listings with error: \(error.localizedDescription)")
         }
@@ -53,17 +66,19 @@ class ExploreViewModel: ObservableObject {
     }
     
     func updateListingsForLocation() {
-        var filteredListings = listingsCopy
+        var filteredListings: [Listing]
+        
+        if let gender = selectedGender {
+            filteredListings = listingsByGender[gender] ?? []
+        } else {
+            filteredListings = Array(listingsByGender.values.flatMap { $0 })
+        }
         
         if !searchLocation.isEmpty {
             filteredListings = filteredListings.filter({
                 $0.city.lowercased() == searchLocation.lowercased() ||
                 $0.state.lowercased() == searchLocation.lowercased()
             })
-        }
-        
-        if let gender = selectedGender {
-            filteredListings = filteredListings.filter({ $0.gender == gender })
         }
         
         switch sortOrder {

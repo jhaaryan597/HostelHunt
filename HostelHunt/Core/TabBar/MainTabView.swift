@@ -3,8 +3,11 @@ import SwiftUI
 struct MainTabView: View {
     var body: some View {
         TabView {
-            ExploreView()
+            GenZExploreView()
                 .tabItem { Label("Explore", systemImage: "magnifyingglass") }
+            
+            CommunityView()
+                .tabItem { Label("Community", systemImage: "person.2") }
             
             WishlistsView()
                 .tabItem { Label("Wishlists", systemImage: "heart") }
@@ -14,6 +17,14 @@ struct MainTabView: View {
             }
             .tabItem { Label("Profile", systemImage: "person") }
         }
+        .onAppear {
+            let appearance = UITabBarAppearance()
+            appearance.configureWithTransparentBackground()
+            appearance.backgroundEffect = UIBlurEffect(style: .dark)
+            UITabBar.appearance().standardAppearance = appearance
+            UITabBar.appearance().scrollEdgeAppearance = appearance
+        }
+        .tint(GenZDesignSystem.Colors.primary)
     }
 }
 

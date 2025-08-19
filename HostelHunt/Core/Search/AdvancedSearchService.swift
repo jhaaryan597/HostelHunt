@@ -214,23 +214,23 @@ struct AdvancedSearchView: View {
         NavigationView {
             VStack(spacing: 0) {
                 // Search Header
-                VStack(spacing: DesignSystem.Spacing.md) {
+                VStack(spacing: GenZDesignSystem.Spacing.md) {
                     AnimatedSearchBar(searchText: $searchService.searchText)
                     
                     // Quick Filters
                     ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: DesignSystem.Spacing.sm) {
+                        HStack(spacing: GenZDesignSystem.Spacing.sm) {
                             ForEach(QuickFilter.allCases, id: \.rawValue) { filter in
                                 QuickFilterChip(filter: filter) {
                                     searchService.applyQuickFilter(filter)
                                 }
                             }
                         }
-                        .padding(.horizontal, DesignSystem.Spacing.md)
+                        .padding(.horizontal, GenZDesignSystem.Spacing.md)
                     }
                 }
-                .padding(.vertical, DesignSystem.Spacing.md)
-                .background(DesignSystem.Colors.background)
+                .padding(.vertical, GenZDesignSystem.Spacing.md)
+                .background(GenZDesignSystem.Colors.background)
                 
                 // Content
                 if searchService.searchText.isEmpty {
@@ -265,15 +265,15 @@ struct QuickFilterChip: View {
     
     var body: some View {
         Button(action: action) {
-            HStack(spacing: DesignSystem.Spacing.xs) {
+            HStack(spacing: GenZDesignSystem.Spacing.xs) {
                 Image(systemName: filter.icon)
                     .font(.caption)
                 Text(filter.rawValue)
-                    .font(DesignSystem.Typography.labelSmall)
+                    .font(GenZDesignSystem.Typography.labelSmall)
             }
             .foregroundColor(.white)
-            .padding(.horizontal, DesignSystem.Spacing.md)
-            .padding(.vertical, DesignSystem.Spacing.sm)
+            .padding(.horizontal, GenZDesignSystem.Spacing.md)
+            .padding(.vertical, GenZDesignSystem.Spacing.sm)
             .background(
                 Capsule()
                     .fill(filter.color)
@@ -288,64 +288,64 @@ struct SearchSuggestionsView: View {
     
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: DesignSystem.Spacing.lg) {
+            VStack(alignment: .leading, spacing: GenZDesignSystem.Spacing.lg) {
                 // AI Recommendations
                 if !searchService.aiRecommendations.isEmpty {
-                    VStack(alignment: .leading, spacing: DesignSystem.Spacing.md) {
+                    VStack(alignment: .leading, spacing: GenZDesignSystem.Spacing.md) {
                         HStack {
                             Image(systemName: "brain.head.profile")
-                                .foregroundColor(DesignSystem.Colors.primary)
+                                .foregroundColor(GenZDesignSystem.Colors.primary)
                             Text("AI Recommendations")
-                                .font(DesignSystem.Typography.headlineSmall)
-                                .foregroundColor(DesignSystem.Colors.textPrimary)
+                                .font(GenZDesignSystem.Typography.headlineSmall)
+                                .foregroundColor(GenZDesignSystem.Colors.textPrimary)
                         }
                         
                         ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: DesignSystem.Spacing.md) {
+                            HStack(spacing: GenZDesignSystem.Spacing.md) {
                                 ForEach(searchService.aiRecommendations, id: \.id) { listing in
                                     FuturisticListingCard(listing: listing)
                                         .frame(width: 280)
                                 }
                             }
-                            .padding(.horizontal, DesignSystem.Spacing.md)
+                            .padding(.horizontal, GenZDesignSystem.Spacing.md)
                         }
                     }
                 }
                 
                 // Popular Searches
-                VStack(alignment: .leading, spacing: DesignSystem.Spacing.md) {
+                VStack(alignment: .leading, spacing: GenZDesignSystem.Spacing.md) {
                     Text("Popular Searches")
-                        .font(DesignSystem.Typography.headlineSmall)
-                        .foregroundColor(DesignSystem.Colors.textPrimary)
-                        .padding(.horizontal, DesignSystem.Spacing.md)
+                        .font(GenZDesignSystem.Typography.headlineSmall)
+                        .foregroundColor(GenZDesignSystem.Colors.textPrimary)
+                        .padding(.horizontal, GenZDesignSystem.Spacing.md)
                     
-                    LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: DesignSystem.Spacing.sm) {
+                    LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: GenZDesignSystem.Spacing.sm) {
                         ForEach(searchService.popularSearches, id: \.self) { search in
                             SearchSuggestionCard(text: search) {
                                 searchService.searchText = search
                             }
                         }
                     }
-                    .padding(.horizontal, DesignSystem.Spacing.md)
+                    .padding(.horizontal, GenZDesignSystem.Spacing.md)
                 }
                 
                 // Recent Searches
                 if !searchService.recentSearches.isEmpty {
-                    VStack(alignment: .leading, spacing: DesignSystem.Spacing.md) {
+                    VStack(alignment: .leading, spacing: GenZDesignSystem.Spacing.md) {
                         HStack {
                             Text("Recent Searches")
-                                .font(DesignSystem.Typography.headlineSmall)
-                                .foregroundColor(DesignSystem.Colors.textPrimary)
+                                .font(GenZDesignSystem.Typography.headlineSmall)
+                                .foregroundColor(GenZDesignSystem.Colors.textPrimary)
                             
                             Spacer()
                             
                             Button("Clear") {
                                 searchService.clearRecentSearches()
                             }
-                            .font(DesignSystem.Typography.labelMedium)
-                            .foregroundColor(DesignSystem.Colors.primary)
+                            .font(GenZDesignSystem.Typography.labelMedium)
+                            .foregroundColor(GenZDesignSystem.Colors.primary)
                         }
-                        .padding(.horizontal, DesignSystem.Spacing.md)
+                        .padding(.horizontal, GenZDesignSystem.Spacing.md)
                         
                         ForEach(searchService.recentSearches, id: \.self) { search in
                             RecentSearchRow(text: search) {
@@ -355,7 +355,7 @@ struct SearchSuggestionsView: View {
                     }
                 }
             }
-            .padding(.vertical, DesignSystem.Spacing.md)
+            .padding(.vertical, GenZDesignSystem.Spacing.md)
         }
     }
 }
@@ -368,14 +368,13 @@ struct SearchSuggestionCard: View {
     var body: some View {
         Button(action: action) {
             Text(text)
-                .font(DesignSystem.Typography.bodyMedium)
-                .foregroundColor(DesignSystem.Colors.textPrimary)
+                .font(GenZDesignSystem.Typography.body)
+                .foregroundColor(GenZDesignSystem.Colors.textPrimary)
                 .multilineTextAlignment(.leading)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(DesignSystem.Spacing.md)
-                .background(DesignSystem.Colors.surface)
-                .cornerRadius(DesignSystem.CornerRadius.md)
-                .applyShadow(DesignSystem.Shadows.small)
+                .padding(GenZDesignSystem.Spacing.md)
+                .background(GenZDesignSystem.Colors.surface)
+                .cornerRadius(GenZDesignSystem.CornerRadius.md)
         }
     }
 }
@@ -389,21 +388,21 @@ struct RecentSearchRow: View {
         Button(action: action) {
             HStack {
                 Image(systemName: "clock")
-                    .foregroundColor(DesignSystem.Colors.textTertiary)
+                    .foregroundColor(GenZDesignSystem.Colors.textTertiary)
                     .font(.system(size: 16))
                 
                 Text(text)
-                    .font(DesignSystem.Typography.bodyMedium)
-                    .foregroundColor(DesignSystem.Colors.textPrimary)
+                    .font(GenZDesignSystem.Typography.body)
+                    .foregroundColor(GenZDesignSystem.Colors.textPrimary)
                 
                 Spacer()
                 
                 Image(systemName: "arrow.up.left")
-                    .foregroundColor(DesignSystem.Colors.textTertiary)
+                    .foregroundColor(GenZDesignSystem.Colors.textTertiary)
                     .font(.system(size: 14))
             }
-            .padding(.horizontal, DesignSystem.Spacing.md)
-            .padding(.vertical, DesignSystem.Spacing.sm)
+            .padding(.horizontal, GenZDesignSystem.Spacing.md)
+            .padding(.vertical, GenZDesignSystem.Spacing.sm)
         }
     }
 }
@@ -420,12 +419,12 @@ struct SearchResultsView: View {
                 EmptySearchView()
             } else {
                 ScrollView {
-                    LazyVStack(spacing: DesignSystem.Spacing.md) {
+                    LazyVStack(spacing: GenZDesignSystem.Spacing.md) {
                         ForEach(searchService.searchResults, id: \.id) { listing in
                             FuturisticListingCard(listing: listing)
                         }
                     }
-                    .padding(DesignSystem.Spacing.md)
+                    .padding(GenZDesignSystem.Spacing.md)
                 }
             }
         }
@@ -435,14 +434,14 @@ struct SearchResultsView: View {
 // MARK: - Loading View
 struct LoadingView: View {
     var body: some View {
-        VStack(spacing: DesignSystem.Spacing.lg) {
+        VStack(spacing: GenZDesignSystem.Spacing.lg) {
             ProgressView()
                 .scaleEffect(1.5)
-                .tint(DesignSystem.Colors.primary)
+                .tint(GenZDesignSystem.Colors.primary)
             
             Text("Finding perfect hostels for you...")
-                .font(DesignSystem.Typography.bodyMedium)
-                .foregroundColor(DesignSystem.Colors.textSecondary)
+                .font(GenZDesignSystem.Typography.body)
+                .foregroundColor(GenZDesignSystem.Colors.textSecondary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -451,23 +450,23 @@ struct LoadingView: View {
 // MARK: - Empty Search View
 struct EmptySearchView: View {
     var body: some View {
-        VStack(spacing: DesignSystem.Spacing.lg) {
+        VStack(spacing: GenZDesignSystem.Spacing.lg) {
             Image(systemName: "magnifyingglass")
                 .font(.system(size: 64))
-                .foregroundColor(DesignSystem.Colors.textTertiary)
+                .foregroundColor(GenZDesignSystem.Colors.textTertiary)
             
-            VStack(spacing: DesignSystem.Spacing.sm) {
+            VStack(spacing: GenZDesignSystem.Spacing.sm) {
                 Text("No Results Found")
-                    .font(DesignSystem.Typography.headlineMedium)
-                    .foregroundColor(DesignSystem.Colors.textPrimary)
+                    .font(GenZDesignSystem.Typography.headlineMedium)
+                    .foregroundColor(GenZDesignSystem.Colors.textPrimary)
                 
                 Text("Try adjusting your search or filters")
-                    .font(DesignSystem.Typography.bodyMedium)
-                    .foregroundColor(DesignSystem.Colors.textSecondary)
+                    .font(GenZDesignSystem.Typography.body)
+                    .foregroundColor(GenZDesignSystem.Colors.textSecondary)
                     .multilineTextAlignment(.center)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding(DesignSystem.Spacing.xl)
+        .padding(GenZDesignSystem.Spacing.xl)
     }
 }

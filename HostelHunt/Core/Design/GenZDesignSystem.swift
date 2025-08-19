@@ -1,45 +1,45 @@
 import SwiftUI
 
-// MARK: - Clean Gen-Z Design System
+// MARK: - Futuristic Gen-Z Design System
 struct GenZDesignSystem {
     
-    // MARK: - Refined Color Palette
+    // MARK: - Futuristic Color Palette
     struct Colors {
-        // Primary Brand Colors - Clean and Modern
-        static let primary = Color(red: 0.2, green: 0.4, blue: 1.0) // Clean Blue
-        static let primaryLight = Color(red: 0.4, green: 0.6, blue: 1.0) // Light Blue
-        static let primaryDark = Color(red: 0.1, green: 0.2, blue: 0.8) // Deep Blue
+        // Core Brand Colors - Vibrant and Energetic
+        static let primary = Color(hex: "#00FFFF") // Electric Blue
+        static let primaryLight = Color(hex: "#7B68EE") // Medium Slate Blue
+        static let primaryDark = Color(hex: "#00008B") // Dark Blue
         
-        // Accent Colors - Refined and Balanced
-        static let accent = Color(red: 0.9, green: 0.3, blue: 0.6) // Modern Pink
-        static let accentLight = Color(red: 0.95, green: 0.6, blue: 0.8) // Soft Pink
-        static let accentSecondary = Color(red: 0.6, green: 0.4, blue: 0.9) // Clean Purple
+        // Accent Colors - Bold and Eye-Catching
+        static let accent = Color(hex: "#FF00FF") // Magenta
+        static let accentLight = Color(hex: "#FF7F50") // Coral
+        static let accentSecondary = Color(hex: "#EE82EE") // Violet
         
-        // Supporting Colors - Carefully Selected
-        static let success = Color(red: 0.2, green: 0.8, blue: 0.4) // Clean Green
-        static let warning = Color(red: 1.0, green: 0.7, blue: 0.2) // Warm Orange
-        static let error = Color(red: 1.0, green: 0.3, blue: 0.3) // Clean Red
-        static let info = Color(red: 0.3, green: 0.7, blue: 1.0) // Info Blue
+        // Supporting Colors - Functional and Clear
+        static let success = Color(hex: "#39FF14") // Neon Green
+        static let warning = Color(hex: "#FFFF00") // Electric Yellow
+        static let error = Color(hex: "#FF3131") // Fiery Red
+        static let info = Color(hex: "#1E90FF") // Dodger Blue
         
-        // Clean Backgrounds - Subtle and Elegant
-        static let background = Color(red: 0.98, green: 0.98, blue: 1.0) // Clean White with Blue Tint
-        static let backgroundSecondary = Color(red: 0.95, green: 0.96, blue: 0.98) // Light Gray-Blue
-        static let surface = Color.white
-        static let surfaceSecondary = Color(red: 0.97, green: 0.97, blue: 0.99)
-        static let surfaceElevated = Color.white
+        // Futuristic Backgrounds - Deep and Immersive
+        static let background = Color(hex: "#0D0D0D") // Near Black
+        static let backgroundSecondary = Color(hex: "#1A1A1A") // Dark Gray
+        static let surface = Color(hex: "#1F1F1F") // Slightly Lighter Gray
+        static let surfaceSecondary = Color(hex: "#2A2A2A") // Medium Gray
+        static let surfaceElevated = Color(hex: "#333333") // Light Gray
         
-        // Text Colors - High Contrast and Readable
-        static let textPrimary = Color(red: 0.1, green: 0.1, blue: 0.2) // Dark Blue-Gray
-        static let textSecondary = Color(red: 0.4, green: 0.4, blue: 0.5) // Medium Gray
-        static let textTertiary = Color(red: 0.6, green: 0.6, blue: 0.7) // Light Gray
-        static let textInverse = Color.white
+        // Text Colors - High Contrast and Legible
+        static let textPrimary = Color.white
+        static let textSecondary = Color.gray
+        static let textTertiary = Color(hex: "#A9A9A9") // Dark Gray
+        static let textInverse = Color.black
         
-        // Glass Effects - Subtle and Clean
+        // Glassmorphism Effects - Transparent and Layered
         static let glassPrimary = Color.white.opacity(0.1)
         static let glassSecondary = Color.white.opacity(0.05)
-        static let glassDark = Color.black.opacity(0.1)
+        static let glassDark = Color.black.opacity(0.2)
         
-        // Clean Gradients - Subtle and Professional
+        // Dynamic Gradients - Fluid and Eye-Catching
         static let gradientPrimary = LinearGradient(
             colors: [primary, primaryLight],
             startPoint: .topLeading,
@@ -54,37 +54,15 @@ struct GenZDesignSystem {
         
         static let gradientBackground = LinearGradient(
             colors: [background, backgroundSecondary],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+        
+        static let auroraBackground = LinearGradient(
+            colors: [primary.opacity(0.3), accent.opacity(0.3), background],
             startPoint: .topLeading,
             endPoint: .bottomTrailing
         )
-
-        static let gradientSuccess = LinearGradient(
-            colors: [success, success.opacity(0.8)],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
-        
-        static let gradientWarning = LinearGradient(
-            colors: [warning, warning.opacity(0.8)],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
-        
-        static let gradientError = LinearGradient(
-            colors: [error, error.opacity(0.8)],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
-        
-        static let gradientInfo = LinearGradient(
-            colors: [info, info.opacity(0.8)],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
-        
-
-        
-
     }
     
     // MARK: - Typography - Gen-Z Friendly

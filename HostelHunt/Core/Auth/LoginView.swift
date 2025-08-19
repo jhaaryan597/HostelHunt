@@ -8,7 +8,7 @@ struct LoginView: View {
 
     var body: some View {
         ZStack {
-            GenZDesignSystem.Colors.background.ignoresSafeArea()
+            GenZDesignSystem.Colors.auroraBackground.ignoresSafeArea()
 
             ScrollView {
                 VStack(spacing: GenZDesignSystem.Spacing.lg) {
@@ -31,8 +31,8 @@ struct LoginView: View {
 
                     // Form
                     VStack(spacing: GenZDesignSystem.Spacing.md) {
-                        GenZAuthTextField(iconName: "envelope.fill", placeholder: "Email", text: $email)
-                        GenZAuthTextField(iconName: "lock.fill", placeholder: "Password", text: $password, isSecure: true)
+                        FuturisticTextField(placeholder: "Email", text: $email)
+                        FuturisticTextField(placeholder: "Password", text: $password)
                     }
 
                     if let errorMessage = errorMessage {
@@ -53,8 +53,8 @@ struct LoginView: View {
                         }
                     } label: {
                         Text("Log In")
-                            .primaryButton()
                     }
+                    .buttonStyle(FuturisticPrimaryButton())
                     .padding(.top, GenZDesignSystem.Spacing.md)
 
                     Spacer()
