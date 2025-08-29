@@ -48,6 +48,11 @@ struct ProfileView: View {
                             }
                             .padding(.horizontal)
 
+                            // Rewards Section
+                            RewardsView()
+                                .modernCard()
+                                .padding(.horizontal)
+
                             Spacer()
 
                             // Sign Out Button
