@@ -12,7 +12,13 @@ class SupabaseManager {
             fatalError("Invalid Supabase URL configuration")
         }
         
-        client = SupabaseClient(supabaseURL: supabaseURL, supabaseKey: config.supabaseKey)
+        client = SupabaseClient(
+            supabaseURL: supabaseURL,
+            supabaseKey: config.supabaseKey,
+            options: SupabaseClientOptions(
+                auth: .init(storage: UserDefaultsStorage())
+            )
+        )
     }
     
     func updateDeviceToken(_ token: String) async {
