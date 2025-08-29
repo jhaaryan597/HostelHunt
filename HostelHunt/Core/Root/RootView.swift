@@ -5,13 +5,7 @@ struct RootView: View {
 
     var body: some View {
         Group {
-//            if authService.user == nil {
-//                NavigationView {
-//                    LoginView()
-//                }
-//            } else {
-                MainTabView()
-//            }
+            MainTabView()
         }
         .environmentObject(authService)
     }

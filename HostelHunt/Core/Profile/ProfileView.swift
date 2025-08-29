@@ -45,7 +45,6 @@ struct ProfileView: View {
                             VStack(spacing: ModernDesignSystem.Sizing.padding) {
                                 ModernProfileDetailRow(iconName: "envelope.fill", label: "Email", value: user.email)
                                 ModernProfileDetailRow(iconName: "calendar", label: "Joined", value: "June 2024") // Placeholder
-                                ModernProfileDetailRow(iconName: "person.2.fill", label: "Connections", value: "0") // Placeholder
                             }
                             .padding(.horizontal)
 

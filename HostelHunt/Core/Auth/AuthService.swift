@@ -87,6 +87,8 @@ class AuthService: ObservableObject {
                 .from("users")
                 .insert(user)
                 .execute()
+            
+            await loadCurrentUser(for: response.user)
         } catch {
             print("Error inserting user: \(error.localizedDescription)")
         }
@@ -141,18 +143,5 @@ class AuthService: ObservableObject {
         
         try await updateUser(user)
         self.currentUser = user
-    }
-    
-    // MARK: - Connections
-    
-    func sendConnectionRequest(to user: User) async throws {
-        guard let currentUser = self.user else { return }
-        
-        let connection = Connection(id: 0, createdAt: Date(), userId1: currentUser.id, userId2: UUID(uuidString: user.id)!, status: "pending")
-        
-        try await SupabaseManager.shared.client
-            .from("connections")
-            .insert(connection)
-            .execute()
     }
 }

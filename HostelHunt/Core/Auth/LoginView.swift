@@ -37,10 +37,12 @@ struct LoginView: View {
                         TextField("Email", text: $email)
                             .modernTextField(isFocused: isEmailFocused)
                             .focused($isEmailFocused)
+                            .autocapitalization(.none)
                         
                         SecureField("Password", text: $password)
                             .modernTextField(isFocused: isPasswordFocused)
                             .focused($isPasswordFocused)
+                            .autocapitalization(.none)
                     }
 
                     if let errorMessage = errorMessage {

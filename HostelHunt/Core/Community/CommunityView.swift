@@ -54,15 +54,6 @@ struct UserRowView: View {
             }
             
             Spacer()
-            
-            Button {
-                Task {
-                    try await AuthService.shared.sendConnectionRequest(to: user)
-                }
-            } label: {
-                Text("Connect")
-                    .modernButton()
-            }
         }
     }
 }

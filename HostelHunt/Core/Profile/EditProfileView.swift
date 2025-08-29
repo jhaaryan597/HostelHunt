@@ -15,12 +15,14 @@ struct EditProfileView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                GenZDesignSystem.Colors.auroraBackground.ignoresSafeArea()
+                ModernDesignSystem.Colors.backgroundGradient.ignoresSafeArea()
                 
-                VStack(spacing: GenZDesignSystem.Spacing.lg) {
-                    VStack(spacing: GenZDesignSystem.Spacing.md) {
-                        FuturisticTextField(placeholder: "Full Name", text: $fullname)
-                        FuturisticTextField(placeholder: "Username", text: $username)
+                VStack(spacing: ModernDesignSystem.Sizing.padding) {
+                    VStack(spacing: ModernDesignSystem.Sizing.padding) {
+                        TextField("Full Name", text: $fullname)
+                            .modernTextField(isFocused: false)
+                        TextField("Username", text: $username)
+                            .modernTextField(isFocused: false)
                     }
                     .padding(.horizontal)
                     
@@ -31,12 +33,12 @@ struct EditProfileView: View {
                         }
                     } label: {
                         Text("Save")
+                            .modernButton()
                     }
-                    .buttonStyle(FuturisticPrimaryButton())
                     
                     Spacer()
                 }
-                .padding(.top, GenZDesignSystem.Spacing.lg)
+                .padding(.top, ModernDesignSystem.Sizing.padding)
             }
             .navigationTitle("Edit Profile")
             .navigationBarTitleDisplayMode(.inline)
@@ -45,7 +47,7 @@ struct EditProfileView: View {
                     Button("Cancel") {
                         dismiss()
                     }
-                    .foregroundColor(GenZDesignSystem.Colors.accent)
+                    .foregroundColor(ModernDesignSystem.Colors.primary)
                 }
             }
         }
