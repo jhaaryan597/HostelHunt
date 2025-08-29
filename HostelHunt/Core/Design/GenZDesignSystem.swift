@@ -6,7 +6,7 @@ struct GenZDesignSystem {
     // MARK: - Futuristic Color Palette
     struct Colors {
         // Core Brand Colors - Vibrant and Energetic
-        static let primary = Color(hex: "#00FFFF") // Electric Blue
+        static let primary = Color(hex: "#4B5945") // Electric Blue
         static let primaryLight = Color(hex: "#7B68EE") // Medium Slate Blue
         static let primaryDark = Color(hex: "#00008B") // Dark Blue
         

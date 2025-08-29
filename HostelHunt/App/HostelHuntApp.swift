@@ -9,7 +9,7 @@ struct HostelHuntApp: App {
         WindowGroup {
             ZStack {
                 Color(.black).ignoresSafeArea()
-                MainTabView()
+                SplashScreenView()
                     .environmentObject(authService)
                     .tint(Color("AccentColor"))
             }

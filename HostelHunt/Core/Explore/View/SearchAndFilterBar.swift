@@ -1,40 +1,28 @@
 import SwiftUI
 
 struct SearchAndFilterBar: View {
+    @ObservedObject var viewModel: ExploreViewModel
     @Binding var location: String
+    @FocusState private var isTextFieldFocused: Bool
+
     var body: some View {
         HStack {
-            Image(systemName: "magnifyingglass")
+            TextField("Where to?", text: $location)
+                .font(ModernDesignSystem.Typography.body)
+                .modernTextField(isFocused: isTextFieldFocused)
+                .focused($isTextFieldFocused)
 
-            VStack(alignment: .leading, spacing: 2) {
-                Text(location.isEmpty ? "Where to?" : location)
-                    .font(.footnote)
-                    .fontWeight(.semibold)
-
-                Text("\(location.isEmpty ? "Anywhere - " : "")Any Week - Add guests")
-                    .font(.caption2)
-                    .foregroundStyle(.gray)
+            Button(action: {
+                viewModel.updateListingsForLocation()
+            }) {
+                Text("Search")
+                    .modernButton()
             }
-
-            Spacer()
-
-            Button(action: {}, label: {
-                Image(systemName: "line.3.horizontal.decrease.circle")
-                    .foregroundStyle(.black)
-            })
-        }
-        .padding(.horizontal)
-        .padding(.vertical, 10)
-        .overlay {
-            Capsule()
-                .stroke(lineWidth: 0.5)
-                .foregroundStyle(Color(.systemGray4))
-                .shadow(color: .black.opacity(0.4), radius: 2)
         }
         .padding()
     }
 }
 
 #Preview {
-    SearchAndFilterBar(location: .constant("Los Angeles"))
+    SearchAndFilterBar(viewModel: ExploreViewModel(service: ExploreService()), location: .constant("Los Angeles"))
 }

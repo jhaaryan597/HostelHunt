@@ -10,15 +10,14 @@ struct CommunityView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                GenZDesignSystem.Colors.auroraBackground.ignoresSafeArea()
+                ModernDesignSystem.Colors.backgroundGradient.ignoresSafeArea()
                 
                 ScrollView {
-                    LazyVStack(spacing: GenZDesignSystem.Spacing.md) {
+                    LazyVStack(spacing: ModernDesignSystem.Sizing.padding) {
                         ForEach(users) { user in
                             NavigationLink(destination: UserProfileView(user: user)) {
-                                FuturisticCard {
-                                    UserRowView(user: user)
-                                }
+                                UserRowView(user: user)
+                                    .modernCard()
                             }
                             .buttonStyle(PlainButtonStyle())
                         }
@@ -36,7 +35,7 @@ struct UserRowView: View {
     let user: User
     
     var body: some View {
-        HStack(spacing: GenZDesignSystem.Spacing.md) {
+        HStack(spacing: ModernDesignSystem.Sizing.padding) {
             Image(user.profileImageUrl ?? "default-profile-image")
                 .resizable()
                 .scaledToFill()
@@ -45,13 +44,13 @@ struct UserRowView: View {
             
             VStack(alignment: .leading) {
                 Text(user.fullname)
-                    .font(GenZDesignSystem.Typography.body)
+                    .font(ModernDesignSystem.Typography.body)
                     .fontWeight(.semibold)
-                    .foregroundColor(GenZDesignSystem.Colors.textPrimary)
+                    .foregroundColor(ModernDesignSystem.Colors.text)
                 
                 Text("@\(user.username)")
-                    .font(GenZDesignSystem.Typography.caption)
-                    .foregroundColor(GenZDesignSystem.Colors.textSecondary)
+                    .font(ModernDesignSystem.Typography.body)
+                    .foregroundColor(ModernDesignSystem.Colors.textSecondary)
             }
             
             Spacer()
@@ -62,8 +61,8 @@ struct UserRowView: View {
                 }
             } label: {
                 Text("Connect")
+                    .modernButton()
             }
-            .buttonStyle(FuturisticPrimaryButton())
         }
     }
 }

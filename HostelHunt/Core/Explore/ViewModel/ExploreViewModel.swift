@@ -20,27 +20,7 @@ class ExploreViewModel: ObservableObject {
         self.service = service
         self.authService = authService
         
-        authService.$user
-            .sink { [weak self] user in
-                Task {
-                    if user != nil {
-                        await self?.fetchListings()
-                    } else {
-                        self?.listings = []
-                        self?.listingsByGender = [:]
-                        self?.currentPageByGender = [:]
-                    }
-                }
-            }
-            .store(in: &cancellables)
-        
-        $searchLocation
-            .debounce(for: .milliseconds(500), scheduler: RunLoop.main)
-            .removeDuplicates()
-            .sink { [weak self] _ in
-                self?.updateListingsForLocation()
-            }
-            .store(in: &cancellables)
+        Task { await fetchListings() }
         
         $selectedGender
             .sink { [weak self] _ in
@@ -50,7 +30,6 @@ class ExploreViewModel: ObservableObject {
     }
     
     func fetchListings() async {
-        guard authService.user != nil else { return }
         guard !isLoading else { return }
         isLoading = true
         

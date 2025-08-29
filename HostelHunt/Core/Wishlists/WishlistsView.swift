@@ -12,69 +12,62 @@ struct WishlistsView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                GenZDesignSystem.Colors.auroraBackground.ignoresSafeArea()
+                ModernDesignSystem.Colors.backgroundGradient.ignoresSafeArea()
 
                 if authService.user != nil {
                     VStack {
                         if viewModel.listings.isEmpty {
-                            VStack(spacing: GenZDesignSystem.Spacing.md) {
+                            VStack(spacing: ModernDesignSystem.Sizing.padding) {
                                 Image(systemName: "sparkles")
                                     .font(.system(size: 64))
-                                    .foregroundColor(GenZDesignSystem.Colors.accent)
+                                    .foregroundStyle(ModernDesignSystem.Colors.heroGradient)
                                     
                                 
                                 Text("Your Wishlist Awaits!")
-                                    .font(GenZDesignSystem.Typography.title2)
-                                    .foregroundColor(GenZDesignSystem.Colors.textPrimary)
+                                    .font(DesignSystem.Typography.titleLarge)
+                                    .foregroundColor(ModernDesignSystem.Colors.text)
                                 
                                 Text("Tap the heart on any listing to save it here.")
-                                    .font(GenZDesignSystem.Typography.body)
-                                    .foregroundColor(GenZDesignSystem.Colors.textSecondary)
+                                    .font(ModernDesignSystem.Typography.body)
+                                    .foregroundColor(ModernDesignSystem.Colors.textSecondary)
                                     .multilineTextAlignment(.center)
                                     .padding(.horizontal)
                             }
                         } else {
                             ScrollView {
                                 ForEach(viewModel.listings) { listing in
-                                    FuturisticListingCard(listing: listing)
+                                    ListingItemView(listing: listing)
                                         .environmentObject(authService)
-                                        .padding(.horizontal, GenZDesignSystem.Spacing.md)
-                                        .padding(.vertical, GenZDesignSystem.Spacing.sm)
+                                        .padding(.horizontal, ModernDesignSystem.Sizing.padding)
+                                        .padding(.vertical, ModernDesignSystem.Sizing.padding)
                                 }
                             }
                         }
                     }
                     .navigationTitle("Wishlists")
                     .navigationBarTitleDisplayMode(.inline)
-                    .toolbar {
-                        ToolbarItem(placement: .principal) {
-                            Text("Wishlists")
-                                .font(GenZDesignSystem.Typography.title3)
-                                .foregroundColor(GenZDesignSystem.Colors.textPrimary)
-                        }
-                    }
                     .onAppear {
                         Task {
                             await viewModel.fetchWishlist()
                         }
                     }
                 } else {
-                    VStack(spacing: GenZDesignSystem.Spacing.lg) {
+                    VStack(spacing: ModernDesignSystem.Sizing.padding) {
                         Spacer()
                         
                         Image(systemName: "lock.heart.fill")
                             .font(.system(size: 80))
-                            .foregroundColor(GenZDesignSystem.Colors.accent)
+                            .foregroundStyle(ModernDesignSystem.Colors.heroGradient)
                             
                         
-                        VStack(spacing: GenZDesignSystem.Spacing.sm) {
+                        VStack(spacing: ModernDesignSystem.Sizing.padding) {
                             Text("Unlock Your Wishlists")
-                                .font(GenZDesignSystem.Typography.title2)
-                                .foregroundColor(GenZDesignSystem.Colors.textPrimary)
+                                .font(DesignSystem.Typography.titleLarge)
+                                .foregroundColor(ModernDesignSystem.Colors.text)
                             
                             Text("Log in to create, view, and edit your wishlists.")
-                                .font(GenZDesignSystem.Typography.body)
-                                .foregroundColor(GenZDesignSystem.Colors.textSecondary)
+                                .font(ModernDesignSystem.Typography.body)
+                                .foregroundColor(ModernDesignSystem.Colors.textSecondary)
                                 .multilineTextAlignment(.center)
                         }
                         .padding(.horizontal)
@@ -83,7 +76,7 @@ struct WishlistsView: View {
                             showLogin.toggle()
                         } label: {
                             Text("Log In & Explore")
-                                .primaryButton()
+                                .modernButton()
                         }
                         
                         Spacer()

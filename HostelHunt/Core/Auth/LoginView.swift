@@ -5,41 +5,49 @@ struct LoginView: View {
     @State private var password = ""
     @State private var errorMessage: String?
     @EnvironmentObject var authService: AuthService
+    @FocusState private var isEmailFocused: Bool
+    @FocusState private var isPasswordFocused: Bool
 
     var body: some View {
         ZStack {
-            GenZDesignSystem.Colors.auroraBackground.ignoresSafeArea()
+            ModernDesignSystem.Colors.backgroundGradient.ignoresSafeArea()
 
             ScrollView {
-                VStack(spacing: GenZDesignSystem.Spacing.lg) {
+                VStack(spacing: ModernDesignSystem.Sizing.padding) {
                     // Header
                     VStack {
-                        Image(systemName: "building.2.crop.circle.fill") // Or a custom logo
-                            .font(.system(size: 100))
-                            .foregroundStyle(GenZDesignSystem.Colors.gradientAccent)
+                        Image("HostelHunt")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 150, height: 150)
                             
                         
                         Text("Welcome Back")
-                            .font(GenZDesignSystem.Typography.displayMedium)
-                            .foregroundColor(GenZDesignSystem.Colors.textPrimary)
+                            .font(DesignSystem.Typography.displayMedium)
+                            .foregroundColor(ModernDesignSystem.Colors.text)
                         
                         Text("Log in to continue your adventure")
-                            .font(GenZDesignSystem.Typography.bodySmall)
-                            .foregroundColor(GenZDesignSystem.Colors.textSecondary)
+                            .font(ModernDesignSystem.Typography.body)
+                            .foregroundColor(ModernDesignSystem.Colors.textSecondary)
                     }
-                    .padding(.vertical, GenZDesignSystem.Spacing.xl)
+                    .padding(.vertical, ModernDesignSystem.Sizing.padding)
 
                     // Form
-                    VStack(spacing: GenZDesignSystem.Spacing.md) {
-                        FuturisticTextField(placeholder: "Email", text: $email)
-                        FuturisticTextField(placeholder: "Password", text: $password)
+                    VStack(spacing: ModernDesignSystem.Sizing.padding) {
+                        TextField("Email", text: $email)
+                            .modernTextField(isFocused: isEmailFocused)
+                            .focused($isEmailFocused)
+                        
+                        SecureField("Password", text: $password)
+                            .modernTextField(isFocused: isPasswordFocused)
+                            .focused($isPasswordFocused)
                     }
 
                     if let errorMessage = errorMessage {
                         Text(errorMessage)
-                            .foregroundColor(GenZDesignSystem.Colors.error)
-                            .font(GenZDesignSystem.Typography.caption)
-                            .padding(.top, GenZDesignSystem.Spacing.sm)
+                            .foregroundColor(ModernDesignSystem.Colors.primary)
+                            .font(ModernDesignSystem.Typography.body)
+                            .padding(.top, ModernDesignSystem.Sizing.padding)
                     }
 
                     // Login Button
@@ -53,26 +61,26 @@ struct LoginView: View {
                         }
                     } label: {
                         Text("Log In")
+                            .modernButton()
                     }
-                    .buttonStyle(FuturisticPrimaryButton())
-                    .padding(.top, GenZDesignSystem.Spacing.md)
+                    .padding(.top, ModernDesignSystem.Sizing.padding)
 
                     Spacer()
 
                     // Sign Up Link
                     NavigationLink(destination: SignUpView()) {
-                        HStack(spacing: GenZDesignSystem.Spacing.xs) {
+                        HStack(spacing: 4) {
                             Text("Don't have an account?")
-                                .foregroundColor(GenZDesignSystem.Colors.textSecondary)
+                                .foregroundColor(ModernDesignSystem.Colors.textSecondary)
                             Text("Sign Up")
                                 .fontWeight(.bold)
-                                .foregroundStyle(GenZDesignSystem.Colors.gradientPrimary)
+                                .foregroundStyle(ModernDesignSystem.Colors.heroGradient)
                         }
-                        .font(GenZDesignSystem.Typography.bodyRegular)
+                        .font(ModernDesignSystem.Typography.body)
                     }
-                    .padding(.bottom, GenZDesignSystem.Spacing.md)
+                    .padding(.bottom, ModernDesignSystem.Sizing.padding)
                 }
-                .padding(.horizontal, GenZDesignSystem.Spacing.lg)
+                .padding(.horizontal, ModernDesignSystem.Sizing.padding)
             }
             .navigationBarHidden(true)
         }

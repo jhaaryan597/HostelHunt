@@ -8,42 +8,57 @@ struct SignUpView: View {
     @State private var errorMessage: String?
     @EnvironmentObject var authService: AuthService
     @Environment(\.dismiss) var dismiss
+    @FocusState private var isEmailFocused: Bool
+    @FocusState private var isPasswordFocused: Bool
+    @FocusState private var isFullNameFocused: Bool
+    @FocusState private var isUsernameFocused: Bool
 
     var body: some View {
         ZStack {
-            GenZDesignSystem.Colors.auroraBackground.ignoresSafeArea()
+            ModernDesignSystem.Colors.backgroundGradient.ignoresSafeArea()
 
             ScrollView {
-                VStack(spacing: GenZDesignSystem.Spacing.lg) {
+                VStack(spacing: ModernDesignSystem.Sizing.padding) {
                     // Header
                     VStack {
                         Image(systemName: "sparkles.person.crop.circle.fill")
                             .font(.system(size: 100))
-                            .foregroundStyle(GenZDesignSystem.Colors.gradientPrimary)
+                            .foregroundStyle(ModernDesignSystem.Colors.heroGradient)
                         
                         Text("Join the Hunt")
-                            .font(GenZDesignSystem.Typography.displayMedium)
-                            .foregroundColor(GenZDesignSystem.Colors.textPrimary)
+                            .font(DesignSystem.Typography.displayMedium)
+                            .foregroundColor(ModernDesignSystem.Colors.text)
                         
                         Text("Create your account to get started")
-                            .font(GenZDesignSystem.Typography.body)
-                            .foregroundColor(GenZDesignSystem.Colors.textSecondary)
+                            .font(ModernDesignSystem.Typography.body)
+                            .foregroundColor(ModernDesignSystem.Colors.textSecondary)
                     }
-                    .padding(.vertical, GenZDesignSystem.Spacing.xl)
+                    .padding(.vertical, ModernDesignSystem.Sizing.padding)
 
                     // Form
-                    VStack(spacing: GenZDesignSystem.Spacing.md) {
-                        FuturisticTextField(placeholder: "Full Name", text: $fullName)
-                        FuturisticTextField(placeholder: "Username", text: $username)
-                        FuturisticTextField(placeholder: "Email", text: $email)
-                        FuturisticTextField(placeholder: "Password", text: $password)
+                    VStack(spacing: ModernDesignSystem.Sizing.padding) {
+                        TextField("Full Name", text: $fullName)
+                            .modernTextField(isFocused: isFullNameFocused)
+                            .focused($isFullNameFocused)
+                        
+                        TextField("Username", text: $username)
+                            .modernTextField(isFocused: isUsernameFocused)
+                            .focused($isUsernameFocused)
+                        
+                        TextField("Email", text: $email)
+                            .modernTextField(isFocused: isEmailFocused)
+                            .focused($isEmailFocused)
+                        
+                        SecureField("Password", text: $password)
+                            .modernTextField(isFocused: isPasswordFocused)
+                            .focused($isPasswordFocused)
                     }
 
                     if let errorMessage = errorMessage {
                         Text(errorMessage)
-                            .foregroundColor(GenZDesignSystem.Colors.error)
-                            .font(GenZDesignSystem.Typography.caption)
-                            .padding(.top, GenZDesignSystem.Spacing.sm)
+                            .foregroundColor(ModernDesignSystem.Colors.primary)
+                            .font(ModernDesignSystem.Typography.body)
+                            .padding(.top, ModernDesignSystem.Sizing.padding)
                     }
 
                     // Sign Up Button
@@ -57,9 +72,9 @@ struct SignUpView: View {
                         }
                     } label: {
                         Text("Create Account")
+                            .modernButton()
                     }
-                    .buttonStyle(FuturisticPrimaryButton())
-                    .padding(.top, GenZDesignSystem.Spacing.md)
+                    .padding(.top, ModernDesignSystem.Sizing.padding)
 
                     Spacer()
 
@@ -67,18 +82,18 @@ struct SignUpView: View {
                     Button {
                         dismiss()
                     } label: {
-                        HStack(spacing: GenZDesignSystem.Spacing.xs) {
+                        HStack(spacing: 4) {
                             Text("Already have an account?")
-                                .foregroundColor(GenZDesignSystem.Colors.textSecondary)
+                                .foregroundColor(ModernDesignSystem.Colors.textSecondary)
                             Text("Sign In")
                                 .fontWeight(.bold)
-                                .foregroundStyle(GenZDesignSystem.Colors.gradientPrimary)
+                                .foregroundStyle(ModernDesignSystem.Colors.heroGradient)
                         }
-                        .font(GenZDesignSystem.Typography.body)
+                        .font(ModernDesignSystem.Typography.body)
                     }
-                    .padding(.bottom, GenZDesignSystem.Spacing.md)
+                    .padding(.bottom, ModernDesignSystem.Sizing.padding)
                 }
-                .padding(.horizontal, GenZDesignSystem.Spacing.lg)
+                .padding(.horizontal, ModernDesignSystem.Sizing.padding)
             }
             .navigationBarHidden(true)
         }

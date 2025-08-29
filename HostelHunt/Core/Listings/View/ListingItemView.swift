@@ -9,24 +9,24 @@ struct ListingItemView: View {
             // images
             ListingImageCarouselView(listing: listing)
                 .frame(height: 200)
-                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .clipShape(RoundedRectangle(cornerRadius: ModernDesignSystem.Sizing.cornerRadius))
             
             HStack(alignment: .top) {
                 // details
                 VStack(alignment: .leading) {
                     Text(listing.title)
                         .fontWeight(.semibold)
-                        .foregroundStyle(.black)
+                        .foregroundColor(ModernDesignSystem.Colors.text)
                     
                     Text("\(listing.city), \(listing.state)")
-                        .foregroundStyle(.gray)
+                        .foregroundColor(ModernDesignSystem.Colors.textSecondary)
                     
                     HStack(spacing: 4) {
                         Text("₹\(listing.pricePerMonth)")
                             .fontWeight(.semibold)
                         Text("month")
                     }
-                    .foregroundStyle(.black)
+                    .foregroundColor(ModernDesignSystem.Colors.text)
                 }
                 
                 Spacer()
@@ -37,7 +37,7 @@ struct ListingItemView: View {
                         Image(systemName: "star.fill")
                         Text(formatRating(listing.rating))
                     }
-                    .foregroundStyle(.black)
+                    .foregroundColor(ModernDesignSystem.Colors.text)
                     
                     if authService.user != nil {
                         Button {
@@ -50,14 +50,15 @@ struct ListingItemView: View {
                             }
                         } label: {
                             Image(systemName: authService.isInWishlist(listing) ? "heart.fill" : "heart")
-                                .foregroundStyle(authService.isInWishlist(listing) ? .pink : .black)
+                                .foregroundStyle(authService.isInWishlist(listing) ? ModernDesignSystem.Colors.accent1 : ModernDesignSystem.Colors.text)
                                 .font(.caption)
                         }
                     }
                 }
             }
-            .font(.footnote)
+            .font(ModernDesignSystem.Typography.body)
         }
+        .modernCard()
     }
 }
 

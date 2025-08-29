@@ -8,45 +8,44 @@ struct ProfileView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                GenZDesignSystem.Colors.auroraBackground.ignoresSafeArea()
+                ModernDesignSystem.Colors.backgroundGradient.ignoresSafeArea()
 
                 if let user = authService.currentUser {
                     // Logged-in view
                     ScrollView {
-                        VStack(spacing: GenZDesignSystem.Spacing.lg) {
+                        VStack(spacing: ModernDesignSystem.Sizing.padding) {
                             // Profile Header
-                            FuturisticCard {
-                                VStack {
-                                    Image(systemName: "person.circle.fill")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 120, height: 120)
-                                        .foregroundStyle(GenZDesignSystem.Colors.gradientAccent)
-                                        .padding()
-                                        .background(.ultraThinMaterial)
-                                        .clipShape(Circle())
-                                        .overlay(
-                                            Circle()
-                                                .stroke(GenZDesignSystem.Colors.primary, lineWidth: 2)
-                                        )
-                                    
-                                    Text(user.fullname)
-                                        .font(GenZDesignSystem.Typography.title2)
-                                        .foregroundColor(GenZDesignSystem.Colors.textPrimary)
-                                        .padding(.top, GenZDesignSystem.Spacing.sm)
+                            VStack {
+                                Image(systemName: "person.circle.fill")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 120, height: 120)
+                                    .foregroundStyle(ModernDesignSystem.Colors.heroGradient)
+                                    .padding()
+                                    .background(ModernDesignSystem.Colors.cardBackground)
+                                    .clipShape(Circle())
+                                    .overlay(
+                                        Circle()
+                                            .stroke(ModernDesignSystem.Colors.primary, lineWidth: 2)
+                                    )
+                                
+                                Text(user.fullname)
+                                    .font(DesignSystem.Typography.titleLarge)
+                                    .foregroundColor(ModernDesignSystem.Colors.text)
+                                    .padding(.top, ModernDesignSystem.Sizing.padding)
 
-                                    Text("@\(user.username)")
-                                        .font(GenZDesignSystem.Typography.body)
-                                        .foregroundColor(GenZDesignSystem.Colors.textSecondary)
-                                }
+                                Text("@\(user.username)")
+                                    .font(ModernDesignSystem.Typography.body)
+                                    .foregroundColor(ModernDesignSystem.Colors.textSecondary)
                             }
+                            .modernCard()
                             .padding(.horizontal)
 
                             // Profile Details Section
-                            VStack(spacing: GenZDesignSystem.Spacing.md) {
-                                FuturisticProfileDetailRow(iconName: "envelope.fill", label: "Email", value: user.email)
-                                FuturisticProfileDetailRow(iconName: "calendar", label: "Joined", value: "June 2024") // Placeholder
-                                FuturisticProfileDetailRow(iconName: "person.2.fill", label: "Connections", value: "0") // Placeholder
+                            VStack(spacing: ModernDesignSystem.Sizing.padding) {
+                                ModernProfileDetailRow(iconName: "envelope.fill", label: "Email", value: user.email)
+                                ModernProfileDetailRow(iconName: "calendar", label: "Joined", value: "June 2024") // Placeholder
+                                ModernProfileDetailRow(iconName: "person.2.fill", label: "Connections", value: "0") // Placeholder
                             }
                             .padding(.horizontal)
 
@@ -59,9 +58,9 @@ struct ProfileView: View {
                                 }
                             } label: {
                                 Text("Sign Out")
+                                    .modernButton()
                             }
-                            .buttonStyle(FuturisticAccentButton())
-                            .padding(.bottom, GenZDesignSystem.Spacing.sm)
+                            .padding(.bottom, ModernDesignSystem.Sizing.padding)
 
                         }
                     }
@@ -73,9 +72,9 @@ struct ProfileView: View {
                                 showEditProfile.toggle()
                             } label: {
                                 Text("Edit")
-                                    .font(GenZDesignSystem.Typography.body)
+                                    .font(ModernDesignSystem.Typography.body)
                                     .fontWeight(.semibold)
-                                    .foregroundColor(GenZDesignSystem.Colors.accent)
+                                    .foregroundColor(ModernDesignSystem.Colors.primary)
                             }
                         }
                     }
@@ -87,22 +86,22 @@ struct ProfileView: View {
                     }
                 } else {
                     // Logged-out view
-                    VStack(spacing: GenZDesignSystem.Spacing.lg) {
+                    VStack(spacing: ModernDesignSystem.Sizing.padding) {
                         Spacer()
                         
                         Image(systemName: "person.crop.circle.badge.plus")
                             .font(.system(size: 80))
-                            .foregroundColor(GenZDesignSystem.Colors.accent)
+                            .foregroundStyle(ModernDesignSystem.Colors.heroGradient)
                             
                         
-                        VStack(spacing: GenZDesignSystem.Spacing.sm) {
+                        VStack(spacing: ModernDesignSystem.Sizing.padding) {
                             Text("Join the Community")
-                                .font(GenZDesignSystem.Typography.title2)
-                                .foregroundColor(GenZDesignSystem.Colors.textPrimary)
+                                .font(DesignSystem.Typography.titleLarge)
+                                .foregroundColor(ModernDesignSystem.Colors.text)
                             
                             Text("Log in to manage your profile and connect with others.")
-                                .font(GenZDesignSystem.Typography.body)
-                                .foregroundColor(GenZDesignSystem.Colors.textSecondary)
+                                .font(ModernDesignSystem.Typography.body)
+                                .foregroundColor(ModernDesignSystem.Colors.textSecondary)
                                 .multilineTextAlignment(.center)
                         }
                         .padding(.horizontal)
@@ -111,7 +110,7 @@ struct ProfileView: View {
                             showLogin.toggle()
                         } label: {
                             Text("Log In / Sign Up")
-                                .primaryButton()
+                                .modernButton()
                         }
                         
                         Spacer()
@@ -128,7 +127,7 @@ struct ProfileView: View {
     }
 }
 
-struct GenZProfileDetailRow: View {
+struct ModernProfileDetailRow: View {
     let iconName: String
     let label: String
     let value: String
@@ -137,26 +136,23 @@ struct GenZProfileDetailRow: View {
         HStack {
             Image(systemName: iconName)
                 .font(.title2)
-                .foregroundStyle(GenZDesignSystem.Colors.gradientAccent)
+                .foregroundStyle(ModernDesignSystem.Colors.heroGradient)
                 .frame(width: 40)
             
             Text(label)
-                .font(GenZDesignSystem.Typography.body)
+                .font(ModernDesignSystem.Typography.body)
                 .fontWeight(.semibold)
-                .foregroundColor(GenZDesignSystem.Colors.textPrimary)
+                .foregroundColor(ModernDesignSystem.Colors.text)
             
             Spacer()
             
             Text(value)
-                .font(GenZDesignSystem.Typography.body)
-                .foregroundColor(GenZDesignSystem.Colors.textSecondary)
+                .font(ModernDesignSystem.Typography.body)
+                .foregroundColor(ModernDesignSystem.Colors.textSecondary)
         }
         .padding()
-        .background(.ultraThinMaterial)
-        .cornerRadius(GenZDesignSystem.CornerRadius.lg)
-        .overlay(
-            RoundedRectangle(cornerRadius: GenZDesignSystem.CornerRadius.lg)
-                .stroke(Color.white.opacity(0.2), lineWidth: 1)
-        )
+        .background(ModernDesignSystem.Colors.cardBackground)
+        .cornerRadius(ModernDesignSystem.Sizing.cornerRadius)
+        .shadow(color: ModernDesignSystem.Colors.primary.opacity(0.2), radius: 5, x: 0, y: 2)
     }
 }

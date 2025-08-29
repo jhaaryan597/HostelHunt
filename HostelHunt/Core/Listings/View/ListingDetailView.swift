@@ -24,29 +24,29 @@ struct ListingDetailView: View {
 
     var body: some View {
         ZStack {
-            GenZDesignSystem.Colors.auroraBackground.ignoresSafeArea()
+            ModernDesignSystem.Colors.backgroundGradient.ignoresSafeArea()
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
                     ListingImageCarouselView(listing: listing)
                         .frame(height: 350)
 
-                    VStack(alignment: .leading, spacing: GenZDesignSystem.Spacing.lg) {
+                    VStack(alignment: .leading, spacing: ModernDesignSystem.Sizing.padding) {
                         ListingHeaderView(listing: listing)
-                        GenZDetailSection(title: "Hosted by \(listing.ownerName)", icon: "person.crop.circle.fill") {
+                        ModernDetailSection(title: "Hosted by \(listing.ownerName)", icon: "person.crop.circle.fill") {
                             HostInfoView(listing: listing)
                         }
-                        GenZDetailSection(title: "What this place offers", icon: "sparkles") {
+                        ModernDetailSection(title: "What this place offers", icon: "sparkles") {
                             AmenitiesView(amenities: listing.amenities)
                         }
-                        GenZDetailSection(title: "Where you'll be", icon: "map.fill") {
+                        ModernDetailSection(title: "Where you'll be", icon: "map.fill") {
                             MapView(listing: listing, cameraPosition: $cameraPosition)
                         }
                     }
                     .padding()
-                    .background(GenZDesignSystem.Colors.background)
-                    .clipShape(RoundedCorner(radius: GenZDesignSystem.CornerRadius.xl, corners: [.topLeft, .topRight]))
-                    .offset(y: -GenZDesignSystem.Spacing.xl)
+                    .background(ModernDesignSystem.Colors.solidBackground)
+                    .clipShape(RoundedCorner(radius: ModernDesignSystem.Sizing.cornerRadius, corners: [.topLeft, .topRight]))
+                    .offset(y: -ModernDesignSystem.Sizing.padding)
                 }
             }
             .scrollClipDisabled()
@@ -106,10 +106,10 @@ private struct ListingHeaderView: View {
     let listing: Listing
 
     var body: some View {
-        VStack(alignment: .leading, spacing: GenZDesignSystem.Spacing.md) {
+        VStack(alignment: .leading, spacing: ModernDesignSystem.Sizing.padding) {
             Text(listing.title)
-                .font(GenZDesignSystem.Typography.title1)
-                .foregroundColor(GenZDesignSystem.Colors.textPrimary)
+                .font(DesignSystem.Typography.titleLarge)
+                .foregroundColor(ModernDesignSystem.Colors.text)
 
             HStack {
                 Image(systemName: "mappin.and.ellipse")
@@ -118,9 +118,9 @@ private struct ListingHeaderView: View {
                 Image(systemName: "star.fill")
                 Text(String(format: "%.1f", listing.rating))
             }
-            .font(GenZDesignSystem.Typography.bodySmall)
-            .foregroundColor(GenZDesignSystem.Colors.textSecondary)
-            .padding(.top, GenZDesignSystem.Spacing.xs)
+            .font(ModernDesignSystem.Typography.body)
+            .foregroundColor(ModernDesignSystem.Colors.textSecondary)
+            .padding(.top, ModernDesignSystem.Sizing.padding)
         }
     }
 }
@@ -130,12 +130,12 @@ private struct HostInfoView: View {
 
     var body: some View {
         HStack {
-            VStack(alignment: .leading, spacing: GenZDesignSystem.Spacing.sm) {
+            VStack(alignment: .leading, spacing: ModernDesignSystem.Sizing.padding) {
                 Text("Entire \(listing.type.description)")
-                    .font(GenZDesignSystem.Typography.headlineSmall)
+                    .font(DesignSystem.Typography.headlineSmall)
                 Text("\(listing.numberOfBeds) beds • \(listing.gender.description)")
-                    .font(GenZDesignSystem.Typography.bodySmall)
-                    .foregroundColor(GenZDesignSystem.Colors.textSecondary)
+                    .font(ModernDesignSystem.Typography.body)
+                    .foregroundColor(ModernDesignSystem.Colors.textSecondary)
             }
             Spacer()
             Image(listing.ownerImageUrl)
@@ -143,30 +143,30 @@ private struct HostInfoView: View {
                 .scaledToFill()
                 .frame(width: 64, height: 64)
                 .clipShape(Circle())
-                .overlay(Circle().stroke(GenZDesignSystem.Colors.gradientPrimary, lineWidth: 2))
+                .overlay(Circle().stroke(ModernDesignSystem.Colors.heroGradient, lineWidth: 2))
         }
     }
 }
 
 private struct AmenitiesView: View {
     let amenities: [ListingAmenities]
-    private let columns = [GridItem(.adaptive(minimum: 140), spacing: GenZDesignSystem.Spacing.md)]
+    private let columns = [GridItem(.adaptive(minimum: 140), spacing: ModernDesignSystem.Sizing.padding)]
 
     var body: some View {
-        LazyVGrid(columns: columns, spacing: GenZDesignSystem.Spacing.md) {
+        LazyVGrid(columns: columns, spacing: ModernDesignSystem.Sizing.padding) {
             ForEach(amenities) { amenity in
                 HStack {
                     Image(systemName: amenity.imageName)
                         .font(.title3)
-                        .foregroundStyle(GenZDesignSystem.Colors.gradientAccent)
+                        .foregroundStyle(ModernDesignSystem.Colors.heroGradient)
                         .frame(width: 30)
                     Text(amenity.title)
-                        .font(GenZDesignSystem.Typography.bodySmall)
+                        .font(ModernDesignSystem.Typography.body)
                     Spacer()
                 }
-                .padding(GenZDesignSystem.Spacing.md)
-                .background(GenZDesignSystem.Colors.glassPrimary)
-                .cornerRadius(GenZDesignSystem.CornerRadius.lg)
+                .padding(ModernDesignSystem.Sizing.padding)
+                .background(ModernDesignSystem.Colors.cardBackground)
+                .cornerRadius(ModernDesignSystem.Sizing.cornerRadius)
             }
         }
     }
@@ -181,10 +181,10 @@ private struct MapView: View {
             Marker(listing.title, coordinate: CLLocationCoordinate2D(latitude: listing.latitude, longitude: listing.longitude))
         }
         .frame(height: 200)
-        .cornerRadius(GenZDesignSystem.CornerRadius.lg)
+        .cornerRadius(ModernDesignSystem.Sizing.cornerRadius)
         .overlay(
-            RoundedRectangle(cornerRadius: GenZDesignSystem.CornerRadius.lg)
-                .stroke(Color.white.opacity(0.2), lineWidth: 1)
+            RoundedRectangle(cornerRadius: ModernDesignSystem.Sizing.cornerRadius)
+                .stroke(ModernDesignSystem.Colors.secondary.opacity(0.5), lineWidth: 1)
         )
     }
 }
@@ -197,12 +197,12 @@ private struct ReserveBar: View {
 
     var body: some View {
         HStack {
-            VStack(alignment: .leading, spacing: GenZDesignSystem.Spacing.xs) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text("₹\(listing.pricePerMonth)")
-                    .font(GenZDesignSystem.Typography.price)
+                    .font(DesignSystem.Typography.titleLarge)
                 Text("per month")
-                    .font(GenZDesignSystem.Typography.bodySmall)
-                    .foregroundColor(GenZDesignSystem.Colors.textSecondary)
+                    .font(ModernDesignSystem.Typography.body)
+                    .foregroundColor(ModernDesignSystem.Colors.textSecondary)
             }
             Spacer()
             Button(action: reserveAction) {
@@ -211,20 +211,15 @@ private struct ReserveBar: View {
                         .progressViewStyle(CircularProgressViewStyle(tint: .white))
                 } else {
                     Text("Reserve")
+                        .modernButton()
                 }
             }
-            .buttonStyle(FuturisticPrimaryButton())
             .disabled(isBooking)
         }
-        .padding(.horizontal, GenZDesignSystem.Spacing.lg)
-        .padding(.vertical, GenZDesignSystem.Spacing.sm)
-        .background(.ultraThinMaterial)
-        .clipShape(RoundedCorner(radius: GenZDesignSystem.CornerRadius.xl, corners: [.topLeft, .topRight]))
-        .overlay(alignment: .top) {
-            Rectangle()
-                .fill(GenZDesignSystem.Colors.gradientPrimary.opacity(0.5))
-                .frame(height: 1)
-        }
+        .padding(.horizontal, ModernDesignSystem.Sizing.padding)
+        .padding(.vertical, ModernDesignSystem.Sizing.padding)
+        .background(.thinMaterial)
+        .clipShape(RoundedCorner(radius: ModernDesignSystem.Sizing.cornerRadius, corners: [.topLeft, .topRight]))
     }
 }
 
@@ -237,9 +232,8 @@ private struct HeaderActions: View {
                 Button(action: dismissAction) {
                     Image(systemName: "chevron.left")
                         .font(.title2)
-                        .padding(GenZDesignSystem.Spacing.sm)
-                        .background(FuturisticCard { EmptyView() })
-                        .clipShape(Circle())
+                        .padding(ModernDesignSystem.Sizing.padding)
+                        .background(Circle().fill(ModernDesignSystem.Colors.cardBackground))
                         
                 }
                 Spacer()
@@ -248,15 +242,14 @@ private struct HeaderActions: View {
                 } label: {
                     Image(systemName: "heart")
                         .font(.title2)
-                        .padding(GenZDesignSystem.Spacing.sm)
-                        .background(FuturisticCard { EmptyView() })
-                        .clipShape(Circle())
+                        .padding(ModernDesignSystem.Sizing.padding)
+                        .background(Circle().fill(ModernDesignSystem.Colors.cardBackground))
                         
                 }
             }
-            .font(GenZDesignSystem.Typography.title2)
-            .foregroundColor(GenZDesignSystem.Colors.textPrimary)
-            .padding(.horizontal, GenZDesignSystem.Spacing.lg)
+            .font(DesignSystem.Typography.titleLarge)
+            .foregroundColor(ModernDesignSystem.Colors.text)
+            .padding(.horizontal, ModernDesignSystem.Sizing.padding)
             .padding(.top, 50)
 
             Spacer()
@@ -265,27 +258,27 @@ private struct HeaderActions: View {
     }
 }
 
-private struct GenZDetailSection<Content: View>: View {
+private struct ModernDetailSection<Content: View>: View {
     let title: String
     let icon: String
     @ViewBuilder var content: Content
 
     var body: some View {
-        VStack(alignment: .leading, spacing: GenZDesignSystem.Spacing.md) {
-            HStack(spacing: GenZDesignSystem.Spacing.md) {
+        VStack(alignment: .leading, spacing: ModernDesignSystem.Sizing.padding) {
+            HStack(spacing: ModernDesignSystem.Sizing.padding) {
                 Image(systemName: icon)
                     .font(.title2)
-                    .foregroundStyle(GenZDesignSystem.Colors.gradientAccent)
+                    .foregroundStyle(ModernDesignSystem.Colors.heroGradient)
                 Text(title)
-                    .font(GenZDesignSystem.Typography.title3)
+                    .font(DesignSystem.Typography.titleLarge)
             }
-            .foregroundColor(GenZDesignSystem.Colors.textPrimary)
+            .foregroundColor(ModernDesignSystem.Colors.text)
 
             content
         }
         .padding()
-        .background(GenZDesignSystem.Colors.glassPrimary)
-        .cornerRadius(GenZDesignSystem.CornerRadius.xl)
+        .background(ModernDesignSystem.Colors.cardBackground)
+        .cornerRadius(ModernDesignSystem.Sizing.cornerRadius)
     }
 }
 
