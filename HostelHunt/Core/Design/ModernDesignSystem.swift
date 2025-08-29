@@ -14,6 +14,7 @@ struct ModernDesignSystem {
         static let textSecondary = secondary
         static let backgroundGradient = LinearGradient(gradient: Gradient(colors: [accent2, accent1.opacity(0.5)]), startPoint: .top, endPoint: .bottom)
         static let solidBackground = accent2
+        static let tabBarBackground = Color(hex: "#D9E4D7")
         static let cardBackground = secondary.opacity(0.2)
         
         static let heroGradient = LinearGradient(

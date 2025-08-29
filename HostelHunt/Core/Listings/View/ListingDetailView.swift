@@ -42,6 +42,8 @@ struct ListingDetailView: View {
                         ModernDetailSection(title: "Where you'll be", icon: "map.fill") {
                             MapView(listing: listing, cameraPosition: $cameraPosition)
                         }
+                        Spacer()
+                        .frame(height: 30)
                     }
                     .padding()
                     .background(ModernDesignSystem.Colors.solidBackground)
@@ -50,7 +52,7 @@ struct ListingDetailView: View {
                 }
             }
             .scrollClipDisabled()
-            .ignoresSafeArea(edges: .top)
+            .ignoresSafeArea(.all, edges: .top)
 
             VStack {
                 Spacer()
@@ -64,7 +66,9 @@ struct ListingDetailView: View {
 
             HeaderActions(dismissAction: { dismiss() })
         }
-        .navigationBarHidden(true)
+        .navigationBarBackButtonHidden(true)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
         .sheet(isPresented: $showLogin) {
             LoginView()
         }
@@ -218,7 +222,7 @@ private struct ReserveBar: View {
         }
         .padding(.horizontal, ModernDesignSystem.Sizing.padding)
         .padding(.vertical, ModernDesignSystem.Sizing.padding)
-        .background(.thinMaterial)
+        .background(ModernDesignSystem.Colors.tabBarBackground)
         .clipShape(RoundedCorner(radius: ModernDesignSystem.Sizing.cornerRadius, corners: [.topLeft, .topRight]))
     }
 }
@@ -280,6 +284,7 @@ private struct ModernDetailSection<Content: View>: View {
         .background(ModernDesignSystem.Colors.cardBackground)
         .cornerRadius(ModernDesignSystem.Sizing.cornerRadius)
     }
+
 }
 
 #Preview {

@@ -17,7 +17,7 @@ struct MainTabView: View {
         .onAppear {
             let appearance = UITabBarAppearance()
             appearance.configureWithOpaqueBackground()
-            appearance.backgroundColor = UIColor(ModernDesignSystem.Colors.solidBackground)
+            appearance.backgroundColor = UIColor(ModernDesignSystem.Colors.tabBarBackground)
             UITabBar.appearance().standardAppearance = appearance
             UITabBar.appearance().scrollEdgeAppearance = appearance
         }
