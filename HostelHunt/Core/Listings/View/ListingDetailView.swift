@@ -12,6 +12,9 @@ struct ListingDetailView: View {
     @State private var bookingSuccess = false
     @State private var showError = false
     @State private var errorMessage = ""
+    @State private var reviews: [AppReview] = []
+    @State private var showAddReview = false
+    @State private var showLoginAlert = false
 
     init(listing: Listing) {
         self.listing = listing
@@ -42,8 +45,24 @@ struct ListingDetailView: View {
                         ModernDetailSection(title: "Where you'll be", icon: "map.fill") {
                             MapView(listing: listing, cameraPosition: $cameraPosition)
                         }
+                        ModernDetailSection(
+                            title: "Reviews",
+                            icon: "star.fill",
+                            verticalSpacing: 8
+                        ) {
+                            ReviewsView(reviews: reviews)
+                        } accessory: {
+                            Button("Add a Review") {
+                                if authService.currentUser == nil {
+                                    showLoginAlert = true
+                                } else {
+                                    showAddReview = true
+                                }
+                            }
+                            .modernButton()
+                        }
                         Spacer()
-                        .frame(height: 30)
+                        .frame(height: 45)
                     }
                     .padding()
                     .background(ModernDesignSystem.Colors.solidBackground)
@@ -67,7 +86,8 @@ struct ListingDetailView: View {
             HeaderActions(
                 dismissAction: { dismiss() },
                 listing: listing,
-                authService: authService
+                authService: authService,
+                showLoginAlert: $showLoginAlert
             )
         }
         .navigationBarBackButtonHidden(true)
@@ -85,6 +105,17 @@ struct ListingDetailView: View {
             Button("OK", role: .cancel) { }
         } message: {
             Text(errorMessage)
+        }
+        .sheet(isPresented: $showAddReview) {
+            AddReviewView(listing: listing, onReviewSubmitted: fetchReviews)
+        }
+        .alert("Login Required", isPresented: $showLoginAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("Please login to perform this action.")
+        }
+        .onAppear {
+            fetchReviews()
         }
     }
 
@@ -104,6 +135,23 @@ struct ListingDetailView: View {
                 showError = true
             }
             isBooking = false
+        }
+    }
+
+    private func fetchReviews() {
+        // Convert String ID to UUID
+        guard let listingUUID = UUID(uuidString: listing.id) else {
+            print("Error: Invalid listing ID format - cannot convert to UUID")
+            return
+        }
+        
+        Task {
+            do {
+                reviews = try await ReviewService.shared.fetchReviews(for: listingUUID)
+            } catch {
+                // Handle error
+                print("Error fetching reviews: \(error.localizedDescription)")
+            }
         }
     }
 }
@@ -235,6 +283,7 @@ private struct HeaderActions: View {
     var dismissAction: () -> Void
     let listing: Listing
     @ObservedObject var authService: AuthService
+    @Binding var showLoginAlert: Bool
     
     private var isInWishlist: Bool {
         authService.isInWishlist(listing)
@@ -271,6 +320,11 @@ private struct HeaderActions: View {
     }
     
     private func handleWishlistAction() {
+        guard authService.currentUser != nil else {
+            showLoginAlert = true
+            return
+        }
+        
         Task {
             if isInWishlist {
                 try await authService.removeFromWishlist(listing)
@@ -281,19 +335,35 @@ private struct HeaderActions: View {
     }
 }
 
-private struct ModernDetailSection<Content: View>: View {
+private struct ModernDetailSection<Content: View, Accessory: View>: View {
     let title: String
     let icon: String
+    let verticalSpacing: CGFloat
     @ViewBuilder var content: Content
+    @ViewBuilder var accessory: Accessory
+
+    init(title: String, icon: String, verticalSpacing: CGFloat = ModernDesignSystem.Sizing.padding, @ViewBuilder content: () -> Content, @ViewBuilder accessory: () -> Accessory) {
+        self.title = title
+        self.icon = icon
+        self.verticalSpacing = verticalSpacing
+        self.content = content()
+        self.accessory = accessory()
+    }
+
+    init(title: String, icon: String, verticalSpacing: CGFloat = ModernDesignSystem.Sizing.padding, @ViewBuilder content: () -> Content) where Accessory == EmptyView {
+        self.init(title: title, icon: icon, verticalSpacing: verticalSpacing, content: content, accessory: { EmptyView() })
+    }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: ModernDesignSystem.Sizing.padding) {
+        VStack(alignment: .leading, spacing: verticalSpacing) {
             HStack(spacing: ModernDesignSystem.Sizing.padding) {
                 Image(systemName: icon)
                     .font(.title2)
                     .foregroundStyle(ModernDesignSystem.Colors.heroGradient)
                 Text(title)
                     .font(DesignSystem.Typography.titleLarge)
+                Spacer()
+                accessory
             }
             .foregroundColor(ModernDesignSystem.Colors.text)
 
@@ -303,7 +373,6 @@ private struct ModernDetailSection<Content: View>: View {
         .background(ModernDesignSystem.Colors.cardBackground)
         .cornerRadius(ModernDesignSystem.Sizing.cornerRadius)
     }
-
 }
 
 #Preview {
