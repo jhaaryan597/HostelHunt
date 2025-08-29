@@ -117,8 +117,10 @@ struct ProfileView: View {
                     }
                     .padding()
                     .sheet(isPresented: $showLogin) {
-                        LoginView()
-                            .environmentObject(authService)
+                        NavigationStack {
+                            LoginView()
+                                .environmentObject(authService)
+                        }
                     }
                 }
             }
