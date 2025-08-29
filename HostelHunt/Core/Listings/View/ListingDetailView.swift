@@ -3,7 +3,7 @@ import MapKit
 
 struct ListingDetailView: View {
     @Environment(\.dismiss) var dismiss
-    @EnvironmentObject var authService: AuthService
+    @StateObject var authService = AuthService.shared
     let listing: Listing
     @State private var cameraPosition: MapCameraPosition
     @State private var showLogin = false
@@ -64,7 +64,11 @@ struct ListingDetailView: View {
                 )
             }
 
-            HeaderActions(dismissAction: { dismiss() })
+            HeaderActions(
+                dismissAction: { dismiss() },
+                listing: listing,
+                authService: authService
+            )
         }
         .navigationBarBackButtonHidden(true)
         .navigationBarTitleDisplayMode(.inline)
@@ -229,6 +233,12 @@ private struct ReserveBar: View {
 
 private struct HeaderActions: View {
     var dismissAction: () -> Void
+    let listing: Listing
+    @ObservedObject var authService: AuthService
+    
+    private var isInWishlist: Bool {
+        authService.isInWishlist(listing)
+    }
 
     var body: some View {
         VStack {
@@ -238,17 +248,16 @@ private struct HeaderActions: View {
                         .font(.title2)
                         .padding(ModernDesignSystem.Sizing.padding)
                         .background(Circle().fill(ModernDesignSystem.Colors.cardBackground))
-                        
                 }
                 Spacer()
                 Button {
-                    // TODO: Add to wishlist
+                    handleWishlistAction()
                 } label: {
-                    Image(systemName: "heart")
+                    Image(systemName: isInWishlist ? "heart.fill" : "heart")
+                        .foregroundColor(isInWishlist ? .red : ModernDesignSystem.Colors.text)
                         .font(.title2)
                         .padding(ModernDesignSystem.Sizing.padding)
                         .background(Circle().fill(ModernDesignSystem.Colors.cardBackground))
-                        
                 }
             }
             .font(DesignSystem.Typography.titleLarge)
@@ -259,6 +268,16 @@ private struct HeaderActions: View {
             Spacer()
         }
         .ignoresSafeArea()
+    }
+    
+    private func handleWishlistAction() {
+        Task {
+            if isInWishlist {
+                try await authService.removeFromWishlist(listing)
+            } else {
+                try await authService.addToWishlist(listing)
+            }
+        }
     }
 }
 
