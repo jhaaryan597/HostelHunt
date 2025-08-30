@@ -86,9 +86,8 @@ Users can search for hostels, manage their profiles, and earn rewards — all wr
 
 ---
 
-## 📦 Installation
+## 💬 Feedback & Contact
 
-1. Clone the repo:
-   ```bash
-   git clone https://github.com/your-username/HostelHunt.git
-   cd HostelHunt
+- We’d love to hear your feedback or suggestions! Reach out via email:
+- 📧 aryanjha230705@gmail.com
+
