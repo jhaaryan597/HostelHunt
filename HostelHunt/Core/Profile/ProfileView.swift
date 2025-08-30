@@ -50,7 +50,6 @@ struct ProfileView: View {
 
                             // Rewards Section
                             RewardsView()
-                                .modernCard()
                                 .padding(.horizontal)
 
                             Spacer()

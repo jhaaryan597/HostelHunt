@@ -38,10 +38,14 @@ struct RewardsView: View {
                 }
             }
 
-            Button("Refer a Friend") {
-                // TODO: Implement refer a friend functionality
+            HStack {
+                Spacer()
+                Button("Refer a Friend") {
+                    // TODO: Implement refer a friend functionality
+                }
+                .modernButton()
+                Spacer()
             }
-            .modernButton()
         }
         .padding()
         .background(ModernDesignSystem.Colors.cardBackground)

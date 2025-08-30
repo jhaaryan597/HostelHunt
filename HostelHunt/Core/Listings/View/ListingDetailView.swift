@@ -14,6 +14,7 @@ struct ListingDetailView: View {
     @State private var errorMessage = ""
     @State private var reviews: [AppReview] = []
     @State private var showAddReview = false
+    @State private var showReservationSheet = false
     @State private var showLoginAlert = false
 
     init(listing: Listing) {
@@ -96,6 +97,11 @@ struct ListingDetailView: View {
         .sheet(isPresented: $showLogin) {
             LoginView()
         }
+        .sheet(isPresented: $showReservationSheet) {
+            if let user = authService.currentUser {
+                ReservationView(isPresented: $showReservationSheet, listing: listing, user: user)
+            }
+        }
         .alert("Success!", isPresented: $bookingSuccess) {
             Button("OK", role: .cancel) { }
         } message: {
@@ -120,22 +126,11 @@ struct ListingDetailView: View {
     }
 
     private func reserveListing() {
-        guard let user = authService.currentUser else {
+        guard authService.currentUser != nil else {
             showLogin = true
             return
         }
-
-        isBooking = true
-        Task {
-            do {
-                try await reservationService.reserve(listing: listing, user: user)
-                bookingSuccess = true
-            } catch {
-                errorMessage = "Failed to reserve the listing. Please try again."
-                showError = true
-            }
-            isBooking = false
-        }
+        showReservationSheet = true
     }
 
     private func fetchReviews() {
