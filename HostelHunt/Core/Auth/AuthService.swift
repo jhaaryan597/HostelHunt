@@ -11,22 +11,34 @@ class AuthService: ObservableObject {
     private var authStateTask: Task<Void, Never>?
 
     init() {
+        print("AuthService initialized")
         authStateTask = Task {
             for await state in await SupabaseManager.shared.client.auth.authStateChanges {
                 handleAuthStateChange(state)
             }
         }
         
-        Task { await loadUser() }
+        Task {
+            do {
+                let session = try await SupabaseManager.shared.client.auth.session
+                print("Session loaded successfully")
+                loadUser(from: session)
+            } catch {
+                print("Error loading session: \(error.localizedDescription)")
+            }
+        }
     }
     
     private func handleAuthStateChange(_ state: (event: AuthChangeEvent, session: Session?)) {
+        print("Auth state changed: \(state.event)")
         switch state.event {
         case .signedIn:
             if let session = state.session {
+                print("User signed in")
                 loadUser(from: session)
             }
         case .signedOut:
+            print("User signed out")
             self.user = nil
             self.currentUser = nil
         default:
@@ -80,7 +92,7 @@ class AuthService: ObservableObject {
             data: ["full_name": .string(fullName), "username": .string(username)]
         )
         
-        let user = User(id: response.user.id.uuidString, fullname: fullName, email: email, username: username, profileImageUrl: nil, wishlist: [])
+        let user = User(id: response.user.id.uuidString, fullname: fullName, email: email, username: username, profileImageUrl: nil, wishlist: [], deviceToken: nil, phoneNumber: nil)
         
         do {
             try await SupabaseManager.shared.client

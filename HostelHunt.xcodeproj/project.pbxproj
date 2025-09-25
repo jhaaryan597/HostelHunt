@@ -12,6 +12,7 @@
 		4115DD8E2E43A20600AACB68 /* Realtime in Frameworks */ = {isa = PBXBuildFile; productRef = 4115DD8D2E43A20600AACB68 /* Realtime */; };
 		4115DD902E43A20600AACB68 /* Storage in Frameworks */ = {isa = PBXBuildFile; productRef = 4115DD8F2E43A20600AACB68 /* Storage */; };
 		4115DD922E43A20600AACB68 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 4115DD912E43A20600AACB68 /* Supabase */; };
+		41AA17852E854F5000754A9D /* RazorpayCheckout in Frameworks */ = {isa = PBXBuildFile; productRef = 41AA17842E854F5000754A9D /* RazorpayCheckout */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,6 +65,7 @@
 				4115DD902E43A20600AACB68 /* Storage in Frameworks */,
 				4115DD8E2E43A20600AACB68 /* Realtime in Frameworks */,
 				4115DD8C2E43A20600AACB68 /* PostgREST in Frameworks */,
+				41AA17852E854F5000754A9D /* RazorpayCheckout in Frameworks */,
 				4115DD8A2E43A20600AACB68 /* Auth in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -130,6 +132,7 @@
 				4115DD8D2E43A20600AACB68 /* Realtime */,
 				4115DD8F2E43A20600AACB68 /* Storage */,
 				4115DD912E43A20600AACB68 /* Supabase */,
+				41AA17842E854F5000754A9D /* RazorpayCheckout */,
 			);
 			productName = HostelHunt;
 			productReference = 41C1BB9B2E3B3E7B00CFDF7F /* HostelHunt.app */;
@@ -215,6 +218,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				4115DD882E43A20600AACB68 /* XCRemoteSwiftPackageReference "supabase-swift" */,
+				41AA17832E854F4F00754A9D /* XCRemoteSwiftPackageReference "razorpay-pod" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 41C1BB9C2E3B3E7B00CFDF7F /* Products */;
@@ -581,6 +585,14 @@
 				minimumVersion = 2.5.1;
 			};
 		};
+		41AA17832E854F4F00754A9D /* XCRemoteSwiftPackageReference "razorpay-pod" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/razorpay/razorpay-pod";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.4.5;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -608,6 +620,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4115DD882E43A20600AACB68 /* XCRemoteSwiftPackageReference "supabase-swift" */;
 			productName = Supabase;
+		};
+		41AA17842E854F5000754A9D /* RazorpayCheckout */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 41AA17832E854F4F00754A9D /* XCRemoteSwiftPackageReference "razorpay-pod" */;
+			productName = RazorpayCheckout;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

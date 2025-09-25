@@ -2,9 +2,9 @@ import SwiftUI
 
 struct CommunityView: View {
     @State private var users: [User] = [
-        User(id: "1", fullname: "Jessica Parker", email: "jessica@test.com", username: "jessica", profileImageUrl: "female-profile-photo1"),
-        User(id: "2", fullname: "John Smith", email: "john@test.com", username: "john", profileImageUrl: "male-profile-photo1"),
-        User(id: "3", fullname: "Emily Jones", email: "emily@test.com", username: "emily", profileImageUrl: "female-profile-photo2"),
+        User(id: "1", fullname: "Jessica Parker", email: "jessica@test.com", username: "jessica", profileImageUrl: "female-profile-photo1", wishlist: nil, deviceToken: nil, phoneNumber: nil),
+        User(id: "2", fullname: "John Smith", email: "john@test.com", username: "john", profileImageUrl: "male-profile-photo1", wishlist: nil, deviceToken: nil, phoneNumber: nil),
+        User(id: "3", fullname: "Emily Jones", email: "emily@test.com", username: "emily", profileImageUrl: "female-profile-photo2", wishlist: nil, deviceToken: nil, phoneNumber: nil),
     ]
     
     var body: some View {
