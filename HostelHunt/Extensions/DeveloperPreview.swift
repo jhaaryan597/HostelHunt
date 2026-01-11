@@ -26,7 +26,8 @@ class DeveloperPreview{
             reviews: [
                 .init(id: NSUUID().uuidString, userId: NSUUID().uuidString, userName: "Amit Kumar", userImageUrl: "male-profile-photo", rating: 5, comment: "Great place to stay!", timestamp: Date()),
                 .init(id: NSUUID().uuidString, userId: NSUUID().uuidString, userName: "Priya Sharma", userImageUrl: "male-profile-photo", rating: 4, comment: "Good facilities, but a bit noisy.", timestamp: Date())
-            ]
+            ],
+        
         ),
         .init(
             id: NSUUID().uuidString,

@@ -155,15 +155,18 @@ class ErrorHandler: ObservableObject {
     
     func handle(_ error: Error) {
         DispatchQueue.main.async {
-            if let appError = error as? AppError {
-                self.currentError = appError
+            let appError: AppError
+            if let error = error as? AppError {
+                appError = error
             } else {
-                self.currentError = AppError.unknown(error.localizedDescription)
+                appError = AppError.unknown(error.localizedDescription)
             }
+
+            self.currentError = appError
             self.showError = true
-            
+
             // Log error for analytics/debugging
-            self.logError(self.currentError!)
+            self.logError(appError)
         }
     }
     

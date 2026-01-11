@@ -9,18 +9,59 @@ struct ListingImageCarouselView: View {
             TabView(selection: $selectedIndex) {
                 ForEach(0..<listing.imageURLs.count, id: \.self) { index in
                     GeometryReader { geometry in
-                        Image(listing.imageURLs[index])
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: geometry.size.width, height: geometry.size.height)
-                            .clipped()
-                            .overlay(
-                                LinearGradient(gradient: Gradient(colors: [.clear, .black.opacity(0.6)]),
-                                               startPoint: .center,
-                                               endPoint: .bottom)
-                            )
-                            .tag(index)
+                        let imageString = listing.imageURLs[index]
+
+                        // Check if it's a URL or local asset name
+                        if imageString.hasPrefix("http://") || imageString.hasPrefix("https://") {
+                            // Remote URL - use AsyncImage
+                            AsyncImage(url: URL(string: imageString)) { phase in
+                                switch phase {
+                                case .empty:
+                                    ProgressView()
+                                        .frame(width: geometry.size.width, height: geometry.size.height)
+                                case .success(let image):
+                                    image
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: geometry.size.width, height: geometry.size.height)
+                                        .clipped()
+                                        .overlay(
+                                            LinearGradient(gradient: Gradient(colors: [.clear, .black.opacity(0.6)]),
+                                                           startPoint: .center,
+                                                           endPoint: .bottom)
+                                        )
+                                case .failure:
+                                    ZStack {
+                                        Color.gray.opacity(0.3)
+                                        VStack(spacing: 8) {
+                                            Image(systemName: "photo")
+                                                .font(.system(size: 40))
+                                                .foregroundColor(.gray)
+                                            Text("Image unavailable")
+                                                .font(.caption)
+                                                .foregroundColor(.gray)
+                                        }
+                                    }
+                                    .frame(width: geometry.size.width, height: geometry.size.height)
+                                @unknown default:
+                                    EmptyView()
+                                }
+                            }
+                        } else {
+                            // Local asset - use Image
+                            Image(imageString)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: geometry.size.width, height: geometry.size.height)
+                                .clipped()
+                                .overlay(
+                                    LinearGradient(gradient: Gradient(colors: [.clear, .black.opacity(0.6)]),
+                                                   startPoint: .center,
+                                                   endPoint: .bottom)
+                                )
+                        }
                     }
+                    .tag(index)
                 }
             }
             .tabViewStyle(.page(indexDisplayMode: .never))

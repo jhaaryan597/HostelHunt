@@ -45,29 +45,86 @@ struct ExploreView: View {
                         .padding(.horizontal)
                         
                         ScrollView {
-                            LazyVStack(spacing: 16) {
-                                ForEach(viewModel.listings) { listing in
-                                    NavigationLink(value: listing) {
-                                        ListingItemView(listing: listing)
-                                            .frame(height: 300)
-                                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                                            .onAppear {
-                                                if listing == viewModel.listings.last {
-                                                    Task { await viewModel.fetchListings() }
-                                                }
-                                            }
+                            if viewModel.isLoading && viewModel.listings.isEmpty {
+                                // Initial loading state
+                                VStack(spacing: 16) {
+                                    ProgressView()
+                                        .progressViewStyle(CircularProgressViewStyle())
+                                    Text("Loading listings...")
+                                        .foregroundColor(.secondary)
+                                }
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                .padding()
+                            } else if let errorMessage = viewModel.errorMessage, viewModel.listings.isEmpty {
+                                // Error state
+                                VStack(spacing: 16) {
+                                    Image(systemName: "exclamationmark.triangle")
+                                        .font(.system(size: 48))
+                                        .foregroundColor(.red)
+
+                                    Text(errorMessage)
+                                        .multilineTextAlignment(.center)
+                                        .foregroundColor(.secondary)
+
+                                    Button("Try Again") {
+                                        viewModel.resetAndFetchListings()
+                                    }
+                                    .buttonStyle(.borderedProminent)
+                                }
+                                .padding()
+                            } else if viewModel.listings.isEmpty {
+                                // Empty state
+                                VStack(spacing: 16) {
+                                    Image(systemName: "magnifyingglass")
+                                        .font(.system(size: 64))
+                                        .foregroundColor(.gray)
+
+                                    Text("No listings found")
+                                        .font(.title2)
+                                        .fontWeight(.semibold)
+
+                                    Text("Try adjusting your filters or search")
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                        .multilineTextAlignment(.center)
+
+                                    if viewModel.selectedGender != nil || !viewModel.searchLocation.isEmpty || viewModel.sortOrder != .none {
+                                        Button("Clear Filters") {
+                                            viewModel.selectedGender = nil
+                                            viewModel.searchLocation = ""
+                                            viewModel.sortOrder = .none
+                                        }
+                                        .buttonStyle(.borderedProminent)
                                     }
                                 }
-                            }
-                            if viewModel.isLoading {
-                                ProgressView()
-                                    .progressViewStyle(CircularProgressViewStyle())
-                                    .padding()
+                                .padding()
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            } else {
+                                LazyVStack(spacing: 16) {
+                                    ForEach(viewModel.listings) { listing in
+                                        NavigationLink(value: listing) {
+                                            ListingItemView(listing: listing)
+                                                .frame(height: 300)
+                                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                                                .onAppear {
+                                                    if listing.id == viewModel.listings.last?.id && viewModel.hasMorePages && !viewModel.isFetchingMore {
+                                                        Task { await viewModel.fetchListings() }
+                                                    }
+                                                }
+                                        }
+                                    }
+
+                                    // Loading indicator for pagination
+                                    if viewModel.isFetchingMore {
+                                        ProgressView()
+                                            .progressViewStyle(CircularProgressViewStyle())
+                                            .padding()
+                                    }
+                                }
                             }
                         }
                         .navigationDestination(for: Listing.self){ listing in
                             ListingDetailView(listing: listing)
-                                .navigationBarBackButtonHidden()
                         }
                     }
                 }

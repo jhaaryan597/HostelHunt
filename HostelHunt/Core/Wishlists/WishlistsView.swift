@@ -16,17 +16,42 @@ struct WishlistsView: View {
 
                 if authService.user != nil {
                     VStack {
-                        if viewModel.listings.isEmpty {
+                        if viewModel.isLoading {
+                            // Loading state
+                            VStack(spacing: ModernDesignSystem.Sizing.padding) {
+                                ProgressView()
+                                    .progressViewStyle(CircularProgressViewStyle())
+                                Text("Loading your wishlist...")
+                                    .foregroundColor(ModernDesignSystem.Colors.textSecondary)
+                            }
+                        } else if let errorMessage = viewModel.errorMessage {
+                            // Error state
+                            VStack(spacing: ModernDesignSystem.Sizing.padding) {
+                                Image(systemName: "exclamationmark.triangle")
+                                    .font(.system(size: 48))
+                                    .foregroundColor(.red)
+
+                                Text(errorMessage)
+                                    .multilineTextAlignment(.center)
+                                    .foregroundColor(ModernDesignSystem.Colors.textSecondary)
+
+                                Button("Try Again") {
+                                    Task { await viewModel.fetchWishlist() }
+                                }
+                                .buttonStyle(.borderedProminent)
+                            }
+                            .padding()
+                        } else if viewModel.listings.isEmpty {
+                            // Empty state
                             VStack(spacing: ModernDesignSystem.Sizing.padding) {
                                 Image(systemName: "sparkles")
                                     .font(.system(size: 64))
                                     .foregroundStyle(ModernDesignSystem.Colors.heroGradient)
-                                    
-                                
+
                                 Text("Your Wishlist Awaits!")
                                     .font(DesignSystem.Typography.titleLarge)
                                     .foregroundColor(ModernDesignSystem.Colors.text)
-                                
+
                                 Text("Tap the heart on any listing to save it here.")
                                     .font(ModernDesignSystem.Typography.body)
                                     .foregroundColor(ModernDesignSystem.Colors.textSecondary)
@@ -34,6 +59,7 @@ struct WishlistsView: View {
                                     .padding(.horizontal)
                             }
                         } else {
+                            // Listings
                             ScrollView {
                                 ForEach(viewModel.listings) { listing in
                                     ListingItemView(listing: listing)

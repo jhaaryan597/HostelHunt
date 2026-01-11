@@ -7,19 +7,26 @@ struct SearchAndFilterBar: View {
 
     var body: some View {
         HStack {
-            TextField("Where to?", text: $location)
+            Image(systemName: "magnifyingglass")
+                .foregroundColor(ModernDesignSystem.Colors.textSecondary)
+
+            TextField("Search by city or location...", text: $location)
                 .font(ModernDesignSystem.Typography.body)
-                .modernTextField(isFocused: isTextFieldFocused)
                 .focused($isTextFieldFocused)
 
-            Button(action: {
-                viewModel.updateListingsForLocation()
-            }) {
-                Text("Search")
-                    .modernButton()
+            if !location.isEmpty {
+                Button(action: {
+                    location = ""
+                }) {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(ModernDesignSystem.Colors.textSecondary)
+                }
             }
         }
         .padding()
+        .background(ModernDesignSystem.Colors.cardBackground)
+        .cornerRadius(ModernDesignSystem.Sizing.cornerRadius)
+        .padding(.horizontal)
     }
 }
 

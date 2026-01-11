@@ -3,24 +3,26 @@ import SwiftUI
 struct ListingItemView: View {
     @EnvironmentObject var authService: AuthService
     let listing: Listing
-    
+    @State private var showErrorAlert = false
+    @State private var errorMessage = ""
+
     var body: some View {
         VStack(spacing: 8) {
             // images
             ListingImageCarouselView(listing: listing)
                 .frame(height: 200)
                 .clipShape(RoundedRectangle(cornerRadius: ModernDesignSystem.Sizing.cornerRadius))
-            
+
             HStack(alignment: .top) {
                 // details
                 VStack(alignment: .leading) {
                     Text(listing.title)
                         .fontWeight(.semibold)
                         .foregroundColor(ModernDesignSystem.Colors.text)
-                    
+
                     Text("\(listing.city), \(listing.state)")
                         .foregroundColor(ModernDesignSystem.Colors.textSecondary)
-                    
+
                     HStack(spacing: 4) {
                         Text("₹\(listing.pricePerMonth)")
                             .fontWeight(.semibold)
@@ -28,9 +30,9 @@ struct ListingItemView: View {
                     }
                     .foregroundColor(ModernDesignSystem.Colors.text)
                 }
-                
+
                 Spacer()
-                
+
                 // rating and wishlist
                 VStack(alignment: .trailing, spacing: 4) {
                     HStack(spacing: 2) {
@@ -38,14 +40,19 @@ struct ListingItemView: View {
                         Text(formatRating(listing.rating))
                     }
                     .foregroundColor(ModernDesignSystem.Colors.text)
-                    
+
                     if authService.user != nil {
                         Button {
                             Task {
-                                if authService.isInWishlist(listing) {
-                                    try await authService.removeFromWishlist(listing)
-                                } else {
-                                    try await authService.addToWishlist(listing)
+                                do {
+                                    if authService.isInWishlist(listing) {
+                                        try await authService.removeFromWishlist(listing)
+                                    } else {
+                                        try await authService.addToWishlist(listing)
+                                    }
+                                } catch {
+                                    errorMessage = "Failed to update wishlist. Please try again."
+                                    showErrorAlert = true
                                 }
                             }
                         } label: {
@@ -59,6 +66,11 @@ struct ListingItemView: View {
             .font(ModernDesignSystem.Typography.body)
         }
         .modernCard()
+        .alert("Error", isPresented: $showErrorAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(errorMessage)
+        }
     }
 }
 

@@ -450,7 +450,3 @@ struct GenZFilterPill: View {
         } perform: {}
     }
 }
-
-// GenZTabBar is now implemented in its own dedicated file: GenZTabBar.swift
-
-// CornerRadius helpers are defined in FuturisticComponents.swift to avoid duplication.
